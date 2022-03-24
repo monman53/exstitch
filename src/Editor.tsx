@@ -12,11 +12,19 @@ interface State {
 
 function Editor() {
   const canvasRef = useRef(null);
+  const BGCanvasRef = useRef(null);
 
   const getContext = (): CanvasRenderingContext2D => {
     const canvas: any = canvasRef.current;
     return canvas.getContext("2d");
   };
+
+  const getBGContext = (): CanvasRenderingContext2D => {
+    const canvas: any = BGCanvasRef.current;
+    return canvas.getContext("2d");
+  };
+
+  // const image = new Image();
 
   const dh = 7;
   const dw = 7;
@@ -41,6 +49,12 @@ function Editor() {
   }
 
   const [state, setState] = useState(initialState);
+
+  const renderBGCanvas = () => {
+    const ctx: CanvasRenderingContext2D = getContext();
+    ctx.fillStyle = "red";
+    ctx.fillRect(0, 0, 100, 100)
+  }
 
   const renderCanvas = () => {
     const ctx: CanvasRenderingContext2D = getContext();
@@ -70,6 +84,7 @@ function Editor() {
   };
 
   useEffect(() => {
+    renderBGCanvas();
     renderCanvas();
   });
 
@@ -77,8 +92,9 @@ function Editor() {
   const width = state.dw * state.nw;
 
   return (
-    <div>
-      <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ border: "solid" }} />
+    <div style={{ position: "relative" }}>
+      <canvas ref={BGCanvasRef} height={height} width={width} style={{ border: "solid", position: "absolute" }} />
+      <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ border: "solid", position: "absolute" }} />
     </div >
   );
 }
