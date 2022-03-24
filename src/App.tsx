@@ -1,7 +1,7 @@
 // import React from "react";
 // import logo from "./logo.svg";
 import "./App.css";
-import Canvas from "./Canvas";
+import Editor from "./Editor";
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
           Learn React
         </a> */}
       </header>
-      <Canvas />
+      <Editor />
     </div >
   );
 }
