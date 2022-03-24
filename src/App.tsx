@@ -1,5 +1,5 @@
-import React from "react";
-import logo from "./logo.svg";
+// import React from "react";
+// import logo from "./logo.svg";
 import "./App.css";
 import Canvas from "./Canvas";
 
@@ -25,7 +25,7 @@ function App() {
           Learn React
         </a> */}
       </header>
-      <Canvas id="hoge" height="256" width="256" dummy={1} />
+      <Canvas />
     </div >
   );
 }
