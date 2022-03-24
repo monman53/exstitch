@@ -1,5 +1,13 @@
 import React, { useRef, useEffect, useState } from "react";
 
+interface State {
+  style: string;
+  dw: number;
+  dh: number;
+  nw: number;
+  nh: number;
+};
+
 function Editor() {
   const canvasRef = useRef(null);
 
@@ -8,29 +16,40 @@ function Editor() {
     return canvas.getContext("2d");
   };
 
-  const [style, setStyle] = useState("green");
+  const initialState: State = {
+    style: "green",
+    dw: 8,
+    dh: 8,
+    nw: 120,
+    nh: 120,
+  }
 
-  const renderCanvs = () => {
+  const [state, setState] = useState(initialState);
+
+  const renderCanvas = () => {
     const ctx: CanvasRenderingContext2D = getContext();
-    ctx.fillStyle = style
+    ctx.fillStyle = state.style
     ctx.fillRect(100, 100, 200, 200)
   };
 
   const handleOnClick = () => {
-    if (style === "green") {
-      setStyle("red")
+    if (state.style === "green") {
+      setState({ ...state, style: "red" })
     } else {
-      setStyle("green")
+      setState({ ...state, style: "green" })
     }
   };
 
   useEffect(() => {
-    renderCanvs();
+    renderCanvas();
   });
+
+  const height = state.dh * state.nh;
+  const width = state.dw * state.nw;
 
   return (
     <div>
-      <canvas ref={canvasRef} height="400px" width="400px" onClick={handleOnClick} />
+      <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} />
     </div>
   );
 }
