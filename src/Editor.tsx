@@ -10,6 +10,8 @@ interface State {
   grid: number[],
   imageURL: string,
   image: HTMLImageElement,
+  eraserEnabled: boolean,
+  color: string,
 };
 
 function Editor() {
@@ -30,8 +32,8 @@ function Editor() {
 
   const dh = 7;
   const dw = 7;
-  const nh = 120;
-  const nw = 120;
+  const nh = 80;
+  const nw = 80;
   let grid: number[] = [];
   for (var i = 0; i < nh; i++) {
     for (var j = 0; j < nw; j++) {
@@ -52,6 +54,8 @@ function Editor() {
     grid: grid,
     imageURL: imageURL,
     image: image,
+    eraserEnabled: false,
+    color: "0x00000000",
   }
 
   const [state, setState] = useState(initialState);
@@ -67,13 +71,16 @@ function Editor() {
 
   const renderCanvas = () => {
     const ctx: CanvasRenderingContext2D = getContext();
+    const height = state.nh * state.dh;
+    const width = state.nw * state.dw;
+    ctx.clearRect(0, 0, width, height);
     for (var i = 0; i < state.nh; i++) {
       for (var j = 0; j < state.nw; j++) {
         const h = i * state.dh;
         const w = j * state.dw;
         const style = state.grid[i * state.nw + j];
         if (style !== 0) {
-          ctx.fillStyle = (style + state.debug) % 2 === 0 ? "red" : "green";
+          ctx.fillStyle = state.color;
           ctx.fillRect(w, h, dw, dh)
         }
       }
@@ -89,10 +96,25 @@ function Editor() {
     const i = Math.floor(y / state.dh);
     const j = Math.floor(x / state.dw);
 
+    let next_state = 0;
+    if (!state.eraserEnabled) {
+      next_state = 1;
+    }
+
     // Change grid state (fill one cell)
     let grid = state.grid;
-    grid[i * state.nw + j] = 1
+    grid[i * state.nw + j] = next_state
     setState({ ...state, grid: grid })
+  };
+
+  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const color = event.target.value;
+    setState({ ...state, color: color })
+  };
+
+  const handleEraserChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const eraserEnabled = event.target.checked;
+    setState({ ...state, eraserEnabled: eraserEnabled })
   };
 
   const handleImageURLChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,11 +140,16 @@ function Editor() {
 
   return (
     <div>
+      <hr />
       <div style={{ position: "relative" }}>
         <canvas ref={BGCanvasRef} height={height} width={width} />
         <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ position: "absolute", top: "0", left: "0" }} />
       </div>
-      <div style={{ position: "static" }}>
+      <hr />
+      <div>
+        Color: <input type="color" value={state.color} onChange={handleColorChange} />
+        Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
+        <br />
         Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
       </div>
     </div>
