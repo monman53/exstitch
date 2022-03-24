@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import Canvas from "./Canvas";
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
           Learn React
         </a> */}
       </header>
-    </div>
+      <Canvas id="hoge" height="256" width="256" dummy={1} />
+    </div >
   );
 }
 
