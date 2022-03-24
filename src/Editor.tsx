@@ -1,13 +1,15 @@
 import React, { useRef, useEffect, useState } from "react";
 
 interface State {
-  style: string;
-  debug: number;
-  dw: number;
-  dh: number;
-  nw: number;
-  nh: number;
+  style: string,
+  debug: number,
+  dw: number,
+  dh: number,
+  nw: number,
+  nh: number,
   grid: number[],
+  imageURL: string,
+  image: HTMLImageElement,
 };
 
 function Editor() {
@@ -24,7 +26,7 @@ function Editor() {
     return canvas.getContext("2d");
   };
 
-  // const image = new Image();
+  const image = new Image();
 
   const dh = 7;
   const dw = 7;
@@ -38,6 +40,8 @@ function Editor() {
     }
   }
 
+  const imageURL = "";
+
   const initialState: State = {
     style: "green",
     debug: 0,
@@ -46,14 +50,19 @@ function Editor() {
     nw: nw,
     nh: nh,
     grid: grid,
+    imageURL: imageURL,
+    image: image,
   }
 
   const [state, setState] = useState(initialState);
 
   const renderBGCanvas = () => {
-    const ctx: CanvasRenderingContext2D = getContext();
-    ctx.fillStyle = "red";
-    ctx.fillRect(0, 0, 100, 100)
+    const ctx: CanvasRenderingContext2D = getBGContext();
+    const height = state.nh * state.dh;
+    const width = state.nw * state.dw;
+    ctx.clearRect(0, 0, width, height);
+    ctx.globalAlpha = 0.4;
+    ctx.drawImage(state.image, 0, 0)
   }
 
   const renderCanvas = () => {
@@ -72,15 +81,31 @@ function Editor() {
   };
 
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
+    // Calculate relative mouse coordinates (x, y) on canvas.
     const canvas: any = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const y = event.clientY - rect.top;
     const x = event.clientX - rect.left;
     const i = Math.floor(y / state.dh);
     const j = Math.floor(x / state.dw);
+
+    // Change grid state (fill one cell)
     let grid = state.grid;
     grid[i * state.nw + j] = 1
     setState({ ...state, grid: grid })
+  };
+
+  const handleImageURLChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Get new imageURL
+    const url = event.target.value;
+    setState({ ...state, imageURL: url })
+
+    // Load image
+    let image = new Image();
+    image.src = url;
+    image.onload = () => {
+      setState({ ...state, image: image, imageURL: url })
+    };
   };
 
   useEffect(() => {
@@ -92,10 +117,15 @@ function Editor() {
   const width = state.dw * state.nw;
 
   return (
-    <div style={{ position: "relative" }}>
-      <canvas ref={BGCanvasRef} height={height} width={width} style={{ border: "solid", position: "absolute" }} />
-      <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ border: "solid", position: "absolute" }} />
-    </div >
+    <div>
+      <div style={{ position: "relative" }}>
+        <canvas ref={BGCanvasRef} height={height} width={width} />
+        <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ position: "absolute", top: "0", left: "0" }} />
+      </div>
+      <div style={{ position: "static" }}>
+        Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
+      </div>
+    </div>
   );
 }
 
