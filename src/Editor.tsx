@@ -1,9 +1,14 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 function Editor() {
   const canvasRef = useRef(null);
 
-  var style: string = "green";
+  const getContext = (): CanvasRenderingContext2D => {
+    const canvas: any = canvasRef.current;
+    return canvas.getContext("2d");
+  };
+
+  const [style, setStyle] = useState("green");
 
   const renderCanvs = () => {
     const ctx: CanvasRenderingContext2D = getContext();
@@ -12,18 +17,11 @@ function Editor() {
   };
 
   const handleOnClick = () => {
-    const ctx: CanvasRenderingContext2D = getContext();
-    if (style == "green") {
-      style = "red";
+    if (style === "green") {
+      setStyle("red")
     } else {
-      style = "green";
+      setStyle("green")
     }
-    renderCanvs();
-  };
-
-  const getContext = (): CanvasRenderingContext2D => {
-    const canvas: any = canvasRef.current;
-    return canvas.getContext("2d");
   };
 
   useEffect(() => {
