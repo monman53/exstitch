@@ -2,10 +2,12 @@ import React, { useRef, useEffect, useState } from "react";
 
 interface State {
   style: string;
+  debug: number;
   dw: number;
   dh: number;
   nw: number;
   nh: number;
+  grid: number[],
 };
 
 function Editor() {
@@ -16,28 +18,55 @@ function Editor() {
     return canvas.getContext("2d");
   };
 
+  const dh = 7;
+  const dw = 7;
+  const nh = 120;
+  const nw = 120;
+  let grid: number[] = [];
+  for (var i = 0; i < nh; i++) {
+    for (var j = 0; j < nw; j++) {
+      // grid.push((i + j) % 2);
+      grid.push(0);
+    }
+  }
+
   const initialState: State = {
     style: "green",
-    dw: 8,
-    dh: 8,
-    nw: 120,
-    nh: 120,
+    debug: 0,
+    dw: dw,
+    dh: dh,
+    nw: nw,
+    nh: nh,
+    grid: grid,
   }
 
   const [state, setState] = useState(initialState);
 
   const renderCanvas = () => {
     const ctx: CanvasRenderingContext2D = getContext();
-    ctx.fillStyle = state.style
-    ctx.fillRect(100, 100, 200, 200)
+    for (var i = 0; i < state.nh; i++) {
+      for (var j = 0; j < state.nw; j++) {
+        const h = i * state.dh;
+        const w = j * state.dw;
+        const style = state.grid[i * state.nw + j];
+        if (style !== 0) {
+          ctx.fillStyle = (style + state.debug) % 2 === 0 ? "red" : "green";
+          ctx.fillRect(w, h, dw, dh)
+        }
+      }
+    }
   };
 
-  const handleOnClick = () => {
-    if (state.style === "green") {
-      setState({ ...state, style: "red" })
-    } else {
-      setState({ ...state, style: "green" })
-    }
+  const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
+    const canvas: any = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const y = event.clientY - rect.top;
+    const x = event.clientX - rect.left;
+    const i = Math.floor(y / state.dh);
+    const j = Math.floor(x / state.dw);
+    let grid = state.grid;
+    grid[i * state.nw + j] = 1
+    setState({ ...state, grid: grid })
   };
 
   useEffect(() => {
@@ -49,8 +78,8 @@ function Editor() {
 
   return (
     <div>
-      <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} />
-    </div>
+      <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ border: "solid" }} />
+    </div >
   );
 }
 
