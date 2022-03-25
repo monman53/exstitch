@@ -256,8 +256,11 @@ function Editor() {
         <br />
         Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
         <br />
-        <button onClick={exportData}>Save</button><br />
-        Load: <input type="file" onChange={loadData} ></input>
+        <button onClick={exportData} className="btn btn-outline-secondary">Save</button><br />
+        {/* <div className="input-group mb-3"> */}
+        {/* <button className="btn btn-outline-secondary">Load</button> */}
+        <input className="form-control" type="file" onChange={loadData} id="load" />
+        {/* </div> */}
       </div>
     </div>
   );

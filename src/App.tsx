@@ -3,6 +3,9 @@
 import "./App.css";
 import Editor from "./Editor";
 
+// Importing the Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 function App() {
   return (
     // <div className="App">
