@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/exstitch/static/css/main.073c9b0a.css",
-    "main.js": "/exstitch/static/js/main.33e53059.js",
+    "main.js": "/exstitch/static/js/main.1a293ee8.js",
     "static/js/787.9ba648a3.chunk.js": "/exstitch/static/js/787.9ba648a3.chunk.js",
     "index.html": "/exstitch/index.html",
     "main.073c9b0a.css.map": "/exstitch/static/css/main.073c9b0a.css.map",
-    "main.33e53059.js.map": "/exstitch/static/js/main.33e53059.js.map",
+    "main.1a293ee8.js.map": "/exstitch/static/js/main.1a293ee8.js.map",
     "787.9ba648a3.chunk.js.map": "/exstitch/static/js/787.9ba648a3.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.33e53059.js"
+    "static/js/main.1a293ee8.js"
   ]
 }
