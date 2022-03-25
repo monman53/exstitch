@@ -71,7 +71,9 @@ function Editor() {
     const width = state.nw * state.dw;
     ctx.clearRect(0, 0, width, height);
     ctx.globalAlpha = 0.4;
-    ctx.drawImage(state.image, 0, 0)
+    if (state.image instanceof Image) {
+      ctx.drawImage(state.image, 0, 0)
+    }
   }
 
   const renderCanvas = () => {
@@ -182,6 +184,31 @@ function Editor() {
     };
   };
 
+  const exportData = () => {
+    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+      JSON.stringify(state)
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = "data.json";
+    link.click();
+  };
+
+  const loadData = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileReader = new FileReader();
+    if (event.target.files !== null) {
+      fileReader.readAsText(event.target.files[0], "UTF-8");
+      fileReader.onload = e => {
+        if (e.target !== null) {
+          if (typeof e.target.result === "string") {
+            const data = JSON.parse(e.target.result);
+            setState(data);
+          }
+        }
+      };
+    }
+  };
+
   useEffect(() => {
     renderBGCanvas();
     renderCanvas();
@@ -219,6 +246,9 @@ function Editor() {
         Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
         <br />
         Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
+        <br />
+        <button onClick={exportData}>Save</button><br />
+        Load: <input type="file" onChange={loadData} ></input>
       </div>
     </div>
   );
