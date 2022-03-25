@@ -58,7 +58,7 @@ function Editor() {
     imageURL: imageURL,
     image: image,
     eraserEnabled: false,
-    color: [{ key: 0, value: "#00000" }],
+    color: [{ key: 0, value: "#000000" }],
     colorSelected: 0,
     colorIdCounter: 1,
   }
