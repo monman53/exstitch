@@ -1,6 +1,15 @@
 # exstitch
 
-# Set up logs
+An editor for cross stitch design.
+
+Visit https://monman53.github.io/exstitch/
+
+## Development
+
+* install `npm`
+* `npm start` for debugging
+
+<!-- # Set up logs
 
 
 ```
@@ -14,7 +23,7 @@ touch LICENSE
 # Code formatter
 npm install --save husky lint-staged prettier
 # (and some settings https://create-react-app.dev/docs/setting-up-your-editor#formatting-code-automatically)
-```
+``` -->
 
 <!-- # Getting Started with Create React App
 

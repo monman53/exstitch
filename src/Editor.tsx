@@ -11,7 +11,8 @@ interface State {
   imageURL: string,
   image: HTMLImageElement,
   eraserEnabled: boolean,
-  color: string,
+  color: string[],
+  colorSelected: number,
 };
 
 function Editor() {
@@ -37,8 +38,7 @@ function Editor() {
   let grid: number[] = [];
   for (var i = 0; i < nh; i++) {
     for (var j = 0; j < nw; j++) {
-      // grid.push((i + j) % 2);
-      grid.push(0);
+      grid.push(-1);
     }
   }
 
@@ -55,7 +55,8 @@ function Editor() {
     imageURL: imageURL,
     image: image,
     eraserEnabled: false,
-    color: "0x00000000",
+    color: ["#ee0000", "#00ee00", "#0000ee"],
+    colorSelected: 0,
   }
 
   const [state, setState] = useState(initialState);
@@ -79,8 +80,8 @@ function Editor() {
         const h = i * state.dh;
         const w = j * state.dw;
         const style = state.grid[i * state.nw + j];
-        if (style !== 0) {
-          ctx.fillStyle = state.color;
+        if (style >= 0) {
+          ctx.fillStyle = state.color[style];
           ctx.fillRect(w, h, dw, dh)
         }
       }
@@ -96,9 +97,9 @@ function Editor() {
     const i = Math.floor(y / state.dh);
     const j = Math.floor(x / state.dw);
 
-    let next_state = 0;
+    let next_state = -1;
     if (!state.eraserEnabled) {
-      next_state = 1;
+      next_state = state.colorSelected;
     }
 
     // Change grid state (fill one cell)
@@ -107,9 +108,13 @@ function Editor() {
     setState({ ...state, grid: grid })
   };
 
-  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const color = event.target.value;
-    setState({ ...state, color: color })
+  const handleColorChange = (idx: number) => {
+    return (event: React.ChangeEvent<HTMLInputElement>) => {
+      const new_color = event.target.value;
+      const color = state.color;
+      color[idx] = new_color;
+      setState({ ...state, color: color, colorSelected: idx })
+    }
   };
 
   const handleEraserChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +152,8 @@ function Editor() {
       </div>
       <hr />
       <div>
-        Color: <input type="color" value={state.color} onChange={handleColorChange} />
+        {state.color.map((c, idx) => { return (<div><input type="color" value={c} onChange={handleColorChange(idx)} /><br /></div>) })}
+        {/* Color: <input type="color" value={state.color} onChange={handleColorChange} /> */}
         Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
         <br />
         Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
