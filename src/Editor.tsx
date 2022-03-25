@@ -108,6 +108,12 @@ function Editor() {
     setState({ ...state, grid: grid })
   };
 
+  const handleColorSelectedChange = (idx: number) => {
+    return () => {
+      setState({ ...state, colorSelected: idx })
+    }
+  };
+
   const handleColorChange = (idx: number) => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
       const new_color = event.target.value;
@@ -152,8 +158,19 @@ function Editor() {
       </div>
       <hr />
       <div>
-        {state.color.map((c, idx) => { return (<div><input type="color" value={c} onChange={handleColorChange(idx)} /><br /></div>) })}
-        {/* Color: <input type="color" value={state.color} onChange={handleColorChange} /> */}
+        Color Palette: <div />
+        {state.color.map((c, idx) => {
+          const id = "color_input_" + String(idx);
+          return (
+            <div>
+              <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(idx)} />
+              <label htmlFor={id}>
+                <input type="color" value={c} onChange={handleColorChange(idx)} />
+              </label>
+              <br />
+            </div>
+          )
+        })}
         Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
         <br />
         Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
