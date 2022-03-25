@@ -11,8 +11,11 @@ interface State {
   imageURL: string,
   image: HTMLImageElement,
   eraserEnabled: boolean,
-  color: string[],
+  color: {
+    key: number, value: string
+  }[],
   colorSelected: number,
+  colorIdCounter: number,
 };
 
 function Editor() {
@@ -55,8 +58,9 @@ function Editor() {
     imageURL: imageURL,
     image: image,
     eraserEnabled: false,
-    color: ["#ee0000", "#00ee00", "#0000ee"],
+    color: [{ key: 0, value: "#00000" }],
     colorSelected: 0,
+    colorIdCounter: 1,
   }
 
   const [state, setState] = useState(initialState);
@@ -79,10 +83,14 @@ function Editor() {
       for (var j = 0; j < state.nw; j++) {
         const h = i * state.dh;
         const w = j * state.dw;
-        const style = state.grid[i * state.nw + j];
-        if (style >= 0) {
-          ctx.fillStyle = state.color[style];
-          ctx.fillRect(w, h, dw, dh)
+        const palette_id = state.grid[i * state.nw + j];
+        if (palette_id >= 0) {
+          //TODO: Optimize here
+          const color = state.color.find(e => e.key === palette_id);
+          if (color !== undefined) {
+            ctx.fillStyle = color.value;
+            ctx.fillRect(w, h, dw, dh)
+          }
         }
       }
     }
@@ -102,6 +110,14 @@ function Editor() {
       next_state = state.colorSelected;
     }
 
+    // Ignore when selected color is no longer existed.
+    const color = state.color;
+    //TODO: Optimize here
+    const array_idx = state.color.findIndex(e => e.key === state.colorSelected);
+    if (array_idx == -1) {
+      return;
+    }
+
     // Change grid state (fill one cell)
     let grid = state.grid;
     grid[i * state.nw + j] = next_state
@@ -118,10 +134,35 @@ function Editor() {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
       const new_color = event.target.value;
       const color = state.color;
-      color[idx] = new_color;
-      setState({ ...state, color: color, colorSelected: idx })
+      //TODO: Optimize here
+      const array_idx = state.color.findIndex(e => e.key === idx);
+      console.log(array_idx)
+      if (array_idx !== -1) {
+        color[array_idx].value = new_color;
+        setState({ ...state, color: color, colorSelected: idx })
+      }
     }
   };
+
+  const handleAddColor = () => {
+    const color = state.color;
+    color.push({ key: state.colorIdCounter, value: "#000000" });
+    setState({ ...state, colorIdCounter: state.colorIdCounter + 1, color: color })
+  };
+
+  const handleRemoveColor = (key: number) => {
+    return () => {
+      const color = state.color;
+      //TODO: Optimize here
+      const array_idx = state.color.findIndex(e => e.key === key);
+      console.log(array_idx)
+      if (array_idx !== -1) {
+        // Delete one element
+        color.splice(array_idx, 1);
+        setState({ ...state, color: color })
+      }
+    }
+  }
 
   const handleEraserChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const eraserEnabled = event.target.checked;
@@ -159,18 +200,22 @@ function Editor() {
       <hr />
       <div>
         Color Palette: <div />
-        {state.color.map((c, idx) => {
-          const id = "color_input_" + String(idx);
+        {state.color.map((c) => {
+          const key = c.key;
+          const id = "color_input_" + String(key);
           return (
             <div>
-              <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(idx)} />
+              <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(key)} />
               <label htmlFor={id}>
-                <input type="color" value={c} onChange={handleColorChange(idx)} />
+                <input type="color" value={c.value} onChange={handleColorChange(key)} />
+                <button onClick={handleRemoveColor(key)}>x Remove color</button>
               </label>
               <br />
             </div>
           )
         })}
+        <button onClick={handleAddColor}>+ Add color</button>
+        <br />
         Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
         <br />
         Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
