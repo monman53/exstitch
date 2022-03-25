@@ -96,6 +96,15 @@ function Editor() {
         }
       }
     }
+    // Grids
+    for (var i = 0; i < state.nh; i++) {
+      ctx.fillStyle = i % 10 === 0 ? "#ddd" : "#eee";
+      ctx.fillRect(0, i * state.dh, width, 1);
+    }
+    for (var j = 0; j < state.nw; j++) {
+      ctx.fillStyle = j % 10 === 0 ? "#ddd" : "#eee";
+      ctx.fillRect(j * state.dw, 0, 1, height);
+    }
   };
 
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -116,7 +125,7 @@ function Editor() {
     const color = state.color;
     //TODO: Optimize here
     const array_idx = state.color.findIndex(e => e.key === state.colorSelected);
-    if (array_idx == -1) {
+    if (array_idx === -1) {
       return;
     }
 
