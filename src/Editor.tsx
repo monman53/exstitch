@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { initialState, StateContext } from "./State";
+import { Palette } from "./Palette";
 import { GridEditor } from "./Grid";
 
 function Editor() {
@@ -42,7 +43,7 @@ function Editor() {
         const palette_id = state.data[i * state.nw + j];
         if (palette_id >= 0) {
           //TODO: Optimize here
-          const color = state.color.find(e => e.key === palette_id);
+          const color = state.palette.colors.find(e => e.key === palette_id);
           if (color !== undefined) {
             ctx.fillStyle = color.value;
             ctx.fillRect(w, h, state.dw, state.dh)
@@ -75,13 +76,13 @@ function Editor() {
 
     let next_state = -1;
     if (state.brushType === 1) {
-      next_state = state.colorSelected;
+      next_state = state.palette.selected;
     }
 
     // Ignore when selected color is no longer existed.
-    const color = state.color;
+    const colors = state.palette.colors;
     //TODO: Optimize here
-    const array_idx = color.findIndex(e => e.key === state.colorSelected);
+    const array_idx = colors.findIndex(color => color.key === state.palette.selected);
     if (array_idx === -1) {
       return;
     }
@@ -92,51 +93,11 @@ function Editor() {
     setState({ ...state, data: data })
   };
 
-  const handleColorSelectedChange = (idx: number) => {
-    return () => {
-      setState({ ...state, colorSelected: idx })
-    }
-  };
-
-  const handleColorChange = (idx: number) => {
-    return (event: React.ChangeEvent<HTMLInputElement>) => {
-      const new_color = event.target.value;
-      const color = state.color;
-      //TODO: Optimize here
-      const array_idx = state.color.findIndex(e => e.key === idx);
-      console.log(array_idx)
-      if (array_idx !== -1) {
-        color[array_idx].value = new_color;
-        setState({ ...state, color: color, colorSelected: idx })
-      }
-    }
-  };
-
   const handleBrushTypeChange = (type: number) => {
     return () => {
       setState({ ...state, brushType: type })
     }
   };
-
-  const handleAddColor = () => {
-    const color = state.color;
-    color.push({ key: state.colorIdCounter, value: "#000000" });
-    setState({ ...state, colorIdCounter: state.colorIdCounter + 1, color: color })
-  };
-
-  const handleRemoveColor = (key: number) => {
-    return () => {
-      const color = state.color;
-      //TODO: Optimize here
-      const array_idx = state.color.findIndex(e => e.key === key);
-      console.log(array_idx)
-      if (array_idx !== -1) {
-        // Delete one element
-        color.splice(array_idx, 1);
-        setState({ ...state, color: color })
-      }
-    }
-  }
 
   const handleImageURLChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Get new imageURL
@@ -227,20 +188,7 @@ function Editor() {
               <hr />
 
               {/* Color palette */}
-              <div className="list-group">
-                {state.color.map((c) => {
-                  const key = c.key;
-                  const id = "color_input_" + String(key);
-                  return (
-                    <label htmlFor={id} className="list-group-item" style={{ cursor: "pointer" }}>
-                      <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(key)} />
-                      <input type="color" value={c.value} onChange={handleColorChange(key)} />
-                      <button className="btn-close" onClick={handleRemoveColor(key)}></button>
-                    </label>
-                  )
-                })}
-                <button className="list-group-item" onClick={handleAddColor}>+ Add color</button>
-              </div>
+              <Palette></Palette>
               <hr />
 
               {/* Image URL */}

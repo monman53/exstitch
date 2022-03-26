@@ -1,8 +1,6 @@
 import React from "react";
 
 interface State {
-  style: string,
-  debug: number,
   dw: number,
   dh: number,
   nw: number,
@@ -10,13 +8,14 @@ interface State {
   data: number[],
   imageURL: string,
   image: HTMLImageElement,
-  eraserEnabled: boolean,
   brushType: number, // TODO: Use enum
-  color: {
-    key: number, value: string
-  }[],
-  colorSelected: number,
-  colorIdCounter: number,
+  palette: {
+    colors: {
+      key: number, value: string
+    }[],
+    selected: number,
+    idCounter: number,
+  }
   grid: {
     visible: boolean,
   },
@@ -34,8 +33,6 @@ for (var i = 0; i < nh; i++) {
 }
 
 export const initialState: State = {
-  style: "green",
-  debug: 0,
   dw: dw,
   dh: dh,
   nw: nw,
@@ -43,11 +40,12 @@ export const initialState: State = {
   data: data,
   imageURL: "",
   image: new Image(),
-  eraserEnabled: false,
   brushType: 1,
-  color: [{ key: 0, value: "#000000" }],
-  colorSelected: 0,
-  colorIdCounter: 1,
+  palette: {
+    colors: [{ key: 0, value: "#000000" }],
+    selected: 0,
+    idCounter: 1,
+  },
   grid: {
     visible: true,
   },
