@@ -3,17 +3,27 @@ import { StateContext } from "./State"
 
 export interface PaletteStateType {
   brushType: number, // TODO: Use enum
-  colors: {
-    key: number, value: string
+  columns: {
+    key: number,
+    colors: {
+      key: number, value: string
+    }[],
+    selected: number,
   }[],
-  selected: number,
+  selectedColumns: number,
   idCounter: number,
 };
 
 export const initPaletteState: PaletteStateType = {
   brushType: 1,
-  colors: [{ key: 0, value: "#000000" }],
-  selected: 0,
+  columns: [
+    {
+      key: 0,
+      colors: [{ key: 0, value: "#000000" }],
+      selected: 0,
+    },
+  ],
+  selectedColumns: 0,
   idCounter: 1,
 }
 
@@ -51,7 +61,7 @@ export function Palette() {
   const handleColorSelectedChange = (key: number) => {
     return () => {
       let palette = state.palette;
-      palette.selected = key;
+      palette.columns[palette.selectedColumns].selected = key;
       setState({ ...state, palette: palette })
     }
   };
@@ -61,10 +71,10 @@ export function Palette() {
       const new_color = event.target.value;
       const palette = state.palette;
       //TODO: Optimize here
-      const array_idx = palette.colors.findIndex(color => color.key === key);
+      const array_idx = palette.columns[palette.selectedColumns].colors.findIndex(color => color.key === key);
       if (array_idx !== -1) {
-        palette.colors[array_idx].value = new_color;
-        palette.selected = key;
+        palette.columns[palette.selectedColumns].colors[array_idx].value = new_color;
+        palette.columns[palette.selectedColumns].selected = key;
         setState({ ...state, palette: palette })
       }
     }
@@ -72,7 +82,7 @@ export function Palette() {
 
   const handleAddColor = () => {
     const palette = state.palette;
-    palette.colors.push({ key: palette.idCounter, value: "#000000" });
+    palette.columns[palette.selectedColumns].colors.push({ key: palette.idCounter, value: "#000000" });
     palette.idCounter += 1;
     setState({ ...state, palette: palette })
   };
@@ -81,11 +91,11 @@ export function Palette() {
     return () => {
       const palette = state.palette;
       //TODO: Optimize here
-      const array_idx = palette.colors.findIndex(color => color.key === key);
+      const array_idx = palette.columns[palette.selectedColumns].colors.findIndex(color => color.key === key);
       console.log(array_idx)
       if (array_idx !== -1) {
         // Delete one element
-        palette.colors.splice(array_idx, 1);
+        palette.columns[palette.selectedColumns].colors.splice(array_idx, 1);
         setState({ ...state, palette: palette })
       }
     }
@@ -93,7 +103,7 @@ export function Palette() {
 
   return (
     <div className="list-group">
-      {state.palette.colors.map((c) => {
+      {state.palette.columns[state.palette.selectedColumns].colors.map((c) => {
         const key = c.key;
         const id = "color_input_" + String(key);
         return (

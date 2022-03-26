@@ -52,7 +52,7 @@ export function ClothCanvas(props: any) {
         const palette_id = state.cloth.data[i * state.cloth.nw + j];
         if (palette_id >= 0) {
           //TODO: Optimize here
-          const color = state.palette.colors.find(color => color.key === palette_id);
+          const color = state.palette.columns[state.palette.selectedColumns].colors.find(color => color.key === palette_id);
           if (color !== undefined) {
             ctx.fillStyle = color.value;
             ctx.fillRect(w, h, state.cloth.dw, state.cloth.dh)
@@ -85,13 +85,13 @@ export function ClothCanvas(props: any) {
 
     let next_state = -1;
     if (state.palette.brushType === 1) {
-      next_state = state.palette.selected;
+      next_state = state.palette.columns[state.palette.selectedColumns].selected;
     }
 
     // Ignore when selected color is no longer existed.
-    const colors = state.palette.colors;
+    const colors = state.palette.columns[state.palette.selectedColumns].colors;
     //TODO: Optimize here
-    const array_idx = colors.findIndex(color => color.key === state.palette.selected);
+    const array_idx = colors.findIndex(color => color.key === state.palette.columns[state.palette.selectedColumns].selected);
     if (array_idx === -1) {
       return;
     }
