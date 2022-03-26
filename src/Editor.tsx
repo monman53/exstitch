@@ -11,6 +11,7 @@ interface State {
   imageURL: string,
   image: HTMLImageElement,
   eraserEnabled: boolean,
+  brushType: number, // TODO: Use enum
   color: {
     key: number, value: string
   }[],
@@ -58,6 +59,7 @@ function Editor() {
     imageURL: imageURL,
     image: image,
     eraserEnabled: false,
+    brushType: 1,
     color: [{ key: 0, value: "#000000" }],
     colorSelected: 0,
     colorIdCounter: 1,
@@ -117,14 +119,14 @@ function Editor() {
     const j = Math.floor(x / state.dw);
 
     let next_state = -1;
-    if (!state.eraserEnabled) {
+    if (state.brushType === 1) {
       next_state = state.colorSelected;
     }
 
     // Ignore when selected color is no longer existed.
     const color = state.color;
     //TODO: Optimize here
-    const array_idx = state.color.findIndex(e => e.key === state.colorSelected);
+    const array_idx = color.findIndex(e => e.key === state.colorSelected);
     if (array_idx === -1) {
       return;
     }
@@ -152,6 +154,12 @@ function Editor() {
         color[array_idx].value = new_color;
         setState({ ...state, color: color, colorSelected: idx })
       }
+    }
+  };
+
+  const handleBrushTypeChange = (type: number) => {
+    return () => {
+      setState({ ...state, brushType: type })
     }
   };
 
@@ -228,38 +236,78 @@ function Editor() {
 
   return (
     <div>
-      <hr />
-      <div style={{ position: "relative" }}>
-        <canvas ref={BGCanvasRef} height={height} width={width} />
-        <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ position: "absolute", top: "0", left: "0" }} />
-      </div>
-      <hr />
-      <div>
-        Color Palette: <div />
-        {state.color.map((c) => {
-          const key = c.key;
-          const id = "color_input_" + String(key);
-          return (
-            <div>
-              <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(key)} />
-              <label htmlFor={id}>
-                <input type="color" value={c.value} onChange={handleColorChange(key)} />
-                <button onClick={handleRemoveColor(key)}>x Remove color</button>
-              </label>
-              <br />
+      {/* Header */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="/">exstitch</a>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav">
+              {/* Load button */}
+              <li className="nav-item">
+                <label>
+                  <a className="nav-link" style={{ cursor: "pointer" }}><i className="bi bi-upload"></i> Load</a>
+                  <input style={{ display: "none" }} className="form-control" type="file" onChange={loadData} id="load" />
+                </label>
+              </li>
+              {/* Save button */}
+              <li className="nav-item">
+                <a className="nav-link" onClick={exportData} href=""><i className="bi bi-download"></i> Save</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav >
+
+      <div className="container">
+        <div className="row mt-3">
+          {/* Control panel */}
+
+          {/* Palette */}
+          <div className="col">
+            {/* Brush type */}
+            <div className="btn-group" role="group">
+              <input type="radio" className="btn-check" name="btnradio" id="btnradio1" onClick={handleBrushTypeChange(1)} />
+              <label className="btn btn-outline-secondary" htmlFor="btnradio1">Brush</label>
+
+              <input type="radio" className="btn-check" name="btnradio" id="btnradio2" onClick={handleBrushTypeChange(0)} />
+              <label className="btn btn-outline-secondary" htmlFor="btnradio2">Eraser</label>
             </div>
-          )
-        })}
-        <button onClick={handleAddColor}>+ Add color</button>
-        <br />
-        Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
-        <br />
-        Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
-        <br />
-        <button onClick={exportData}>Save</button><br />
-        Load: <input type="file" onChange={loadData} ></input>
+            <hr />
+
+            {/* Color palette */}
+            <div className="list-group">
+              {state.color.map((c) => {
+                const key = c.key;
+                const id = "color_input_" + String(key);
+                return (
+                  <label htmlFor={id} className="list-group-item" style={{ cursor: "pointer" }}>
+                    <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(key)} />
+                    <input type="color" value={c.value} onChange={handleColorChange(key)} />
+                    <button className="btn-close" onClick={handleRemoveColor(key)}></button>
+                  </label>
+                )
+              })}
+              <button className="list-group-item" onClick={handleAddColor}>+ Add color</button>
+            </div>
+            <hr />
+
+            {/* Image URL */}
+            Image URL: <input className="form-control" type="text" value={state.imageURL} onChange={handleImageURLChange} />
+          </div>
+
+          {/* Canvases */}
+          <div className="col">
+            <div style={{ position: "relative" }}>
+              <canvas ref={BGCanvasRef} height={height} width={width} />
+              <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ position: "absolute", top: "0", left: "0" }} />
+            </div >
+          </div>
+        </div>
       </div>
-    </div>
+    </div >
   );
 }
 
