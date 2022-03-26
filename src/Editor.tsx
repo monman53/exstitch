@@ -11,6 +11,7 @@ interface State {
   imageURL: string,
   image: HTMLImageElement,
   eraserEnabled: boolean,
+  brushType: number, // TODO: Use enum
   color: {
     key: number, value: string
   }[],
@@ -58,6 +59,7 @@ function Editor() {
     imageURL: imageURL,
     image: image,
     eraserEnabled: false,
+    brushType: 1,
     color: [{ key: 0, value: "#000000" }],
     colorSelected: 0,
     colorIdCounter: 1,
@@ -117,14 +119,14 @@ function Editor() {
     const j = Math.floor(x / state.dw);
 
     let next_state = -1;
-    if (!state.eraserEnabled) {
+    if (state.brushType === 1) {
       next_state = state.colorSelected;
     }
 
     // Ignore when selected color is no longer existed.
     const color = state.color;
     //TODO: Optimize here
-    const array_idx = state.color.findIndex(e => e.key === state.colorSelected);
+    const array_idx = color.findIndex(e => e.key === state.colorSelected);
     if (array_idx === -1) {
       return;
     }
@@ -152,6 +154,12 @@ function Editor() {
         color[array_idx].value = new_color;
         setState({ ...state, color: color, colorSelected: idx })
       }
+    }
+  };
+
+  const handleBrushTypeChange = (type: number) => {
+    return () => {
+      setState({ ...state, brushType: type })
     }
   };
 
@@ -259,6 +267,17 @@ function Editor() {
 
           {/* Palette */}
           <div className="col">
+            {/* Brush type */}
+            <div className="btn-group" role="group">
+              <input type="radio" className="btn-check" name="btnradio" id="btnradio1" onClick={handleBrushTypeChange(1)} />
+              <label className="btn btn-outline-secondary" htmlFor="btnradio1">Brush</label>
+
+              <input type="radio" className="btn-check" name="btnradio" id="btnradio2" onClick={handleBrushTypeChange(0)} />
+              <label className="btn btn-outline-secondary" htmlFor="btnradio2">Eraser</label>
+            </div>
+            <hr />
+
+            {/* Color palette */}
             <div className="list-group">
               {state.color.map((c) => {
                 const key = c.key;
@@ -274,9 +293,9 @@ function Editor() {
               <button className="list-group-item" onClick={handleAddColor}>+ Add color</button>
             </div>
             <hr />
-            Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
-            <hr />
-            Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
+
+            {/* Image URL */}
+            Image URL: <input className="form-control" type="text" value={state.imageURL} onChange={handleImageURLChange} />
           </div>
 
           {/* Canvases */}
