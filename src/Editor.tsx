@@ -228,12 +228,38 @@ function Editor() {
 
   return (
     <div>
-      <hr />
-      <div style={{ position: "relative" }}>
+      {/* Header */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="/">exstitch</a>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <a className="nav-link" onClick={exportData} href=""><i className="bi bi-download"></i> Save</a>
+              </li>
+              <li className="nav-item">
+                <label>
+                  <a className="nav-link" style={{ cursor: "pointer" }}><i className="bi bi-upload"></i> Load</a>
+                  <input style={{ display: "none" }} className="form-control" type="file" onChange={loadData} id="load" />
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav >
+
+      {/* Canvases */}
+      < div style={{ position: "relative" }
+      }>
         <canvas ref={BGCanvasRef} height={height} width={width} />
         <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ position: "absolute", top: "0", left: "0" }} />
-      </div>
-      <hr />
+      </div >
+
+      {/* Control panel */}
+      < hr />
       <div>
         Color Palette: <div />
         {state.color.map((c) => {
@@ -255,14 +281,8 @@ function Editor() {
         Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
         <br />
         Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
-        <br />
-        <button onClick={exportData} className="btn btn-outline-secondary">Save</button><br />
-        {/* <div className="input-group mb-3"> */}
-        {/* <button className="btn btn-outline-secondary">Load</button> */}
-        <input className="form-control" type="file" onChange={loadData} id="load" />
-        {/* </div> */}
       </div>
-    </div>
+    </div >
   );
 }
 
