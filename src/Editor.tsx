@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { initialState, StateContext } from "./State";
-import { Palette } from "./Palette";
+import { BrushType, Palette } from "./Palette";
 import { GridEditor } from "./Grid";
 import { ImageURL } from "./Background";
 
@@ -94,12 +94,6 @@ function Editor() {
     setState({ ...state, data: data })
   };
 
-  const handleBrushTypeChange = (type: number) => {
-    return () => {
-      setState({ ...state, brushType: type })
-    }
-  };
-
   const exportData = () => {
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
       JSON.stringify(state)
@@ -166,13 +160,7 @@ function Editor() {
             {/* Control panel */}
             <div className="col">
               {/* Brush type */}
-              <div className="btn-group" role="group">
-                <input type="radio" className="btn-check" name="btnradio" id="btnradio1" onClick={handleBrushTypeChange(1)} />
-                <label className="btn btn-outline-secondary" htmlFor="btnradio1">Brush</label>
-
-                <input type="radio" className="btn-check" name="btnradio" id="btnradio2" onClick={handleBrushTypeChange(0)} />
-                <label className="btn btn-outline-secondary" htmlFor="btnradio2">Eraser</label>
-              </div>
+              <BrushType></BrushType>
               <hr />
 
               {/* Color palette */}

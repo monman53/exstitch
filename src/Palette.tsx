@@ -1,6 +1,29 @@
 import React from "react";
 import { StateContext } from "./State"
 
+export function BrushType() {
+
+  const stateContext = React.useContext(StateContext)
+  const state = stateContext.state;
+  const setState = stateContext.setState;
+
+  const handleBrushTypeChange = (type: number) => {
+    return () => {
+      setState({ ...state, brushType: type })
+    }
+  };
+
+  return (
+    <div className="btn-group" role="group">
+      <input type="radio" className="btn-check" name="btnradio" id="btnradio1" onClick={handleBrushTypeChange(1)} />
+      <label className="btn btn-outline-secondary" htmlFor="btnradio1">Brush</label>
+
+      <input type="radio" className="btn-check" name="btnradio" id="btnradio2" onClick={handleBrushTypeChange(0)} />
+      <label className="btn btn-outline-secondary" htmlFor="btnradio2">Eraser</label>
+    </div>
+  );
+}
+
 export function Palette() {
 
   const stateContext = React.useContext(StateContext)
