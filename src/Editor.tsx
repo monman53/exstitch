@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { initialState, StateContext } from "./State";
 import { Palette } from "./Palette";
 import { GridEditor } from "./Grid";
+import { ImageURL } from "./Background";
 
 function Editor() {
   const [state, setState] = useState(initialState);
@@ -99,19 +100,6 @@ function Editor() {
     }
   };
 
-  const handleImageURLChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Get new imageURL
-    const url = event.target.value;
-    setState({ ...state, imageURL: url })
-
-    // Load image
-    let image = new Image();
-    image.src = url;
-    image.onload = () => {
-      setState({ ...state, image: image, imageURL: url })
-    };
-  };
-
   const exportData = () => {
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
       JSON.stringify(state)
@@ -192,7 +180,7 @@ function Editor() {
               <hr />
 
               {/* Image URL */}
-              Image URL: <input className="form-control" type="text" value={state.imageURL} onChange={handleImageURLChange} />
+              <ImageURL></ImageURL>
               <hr />
 
               {/* Grid */}
