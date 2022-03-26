@@ -2,35 +2,18 @@ import React, { useRef, useEffect, useState } from "react";
 import { initialState, StateContext } from "./State";
 import { BrushType, Palette } from "./Palette";
 import { GridEditor } from "./Grid";
-import { ImageURL } from "./Background";
+import { ImageURL, BackgroundCanvas } from "./Background";
 
 function Editor() {
   const [state, setState] = useState(initialState);
   const valueStateContext = { state: state, setState: setState };
 
   const canvasRef = useRef(null);
-  const BGCanvasRef = useRef(null);
 
   const getContext = (): CanvasRenderingContext2D => {
     const canvas: any = canvasRef.current;
     return canvas.getContext("2d");
   };
-
-  const getBGContext = (): CanvasRenderingContext2D => {
-    const canvas: any = BGCanvasRef.current;
-    return canvas.getContext("2d");
-  };
-
-  const renderBGCanvas = () => {
-    const ctx: CanvasRenderingContext2D = getBGContext();
-    const height = state.nh * state.dh;
-    const width = state.nw * state.dw;
-    ctx.clearRect(0, 0, width, height);
-    ctx.globalAlpha = 0.4;
-    if (state.image instanceof Image) {
-      ctx.drawImage(state.image, 0, 0)
-    }
-  }
 
   const renderCanvas = () => {
     const ctx: CanvasRenderingContext2D = getContext();
@@ -120,7 +103,6 @@ function Editor() {
   };
 
   useEffect(() => {
-    renderBGCanvas();
     renderCanvas();
   });
 
@@ -178,7 +160,7 @@ function Editor() {
             {/* Canvases */}
             <div className="col">
               <div style={{ position: "relative" }}>
-                <canvas ref={BGCanvasRef} height={height} width={width} />
+                <BackgroundCanvas></BackgroundCanvas>
                 <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ position: "absolute", top: "0", left: "0" }} />
               </div >
             </div>
