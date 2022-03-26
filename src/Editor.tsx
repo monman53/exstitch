@@ -237,50 +237,56 @@ function Editor() {
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
-              <li className="nav-item">
-                <a className="nav-link" onClick={exportData} href=""><i className="bi bi-download"></i> Save</a>
-              </li>
+              {/* Load button */}
               <li className="nav-item">
                 <label>
                   <a className="nav-link" style={{ cursor: "pointer" }}><i className="bi bi-upload"></i> Load</a>
                   <input style={{ display: "none" }} className="form-control" type="file" onChange={loadData} id="load" />
                 </label>
               </li>
+              {/* Save button */}
+              <li className="nav-item">
+                <a className="nav-link" onClick={exportData} href=""><i className="bi bi-download"></i> Save</a>
+              </li>
             </ul>
           </div>
         </div>
       </nav >
 
-      {/* Canvases */}
-      < div style={{ position: "relative" }
-      }>
-        <canvas ref={BGCanvasRef} height={height} width={width} />
-        <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ position: "absolute", top: "0", left: "0" }} />
-      </div >
+      <div className="container">
+        <div className="row">
+          {/* Control panel */}
+          <div className="col">
+            Color Palette: <div />
+            {state.color.map((c) => {
+              const key = c.key;
+              const id = "color_input_" + String(key);
+              return (
+                <div>
+                  <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(key)} />
+                  <label htmlFor={id}>
+                    <input type="color" value={c.value} onChange={handleColorChange(key)} />
+                    <button onClick={handleRemoveColor(key)}>x Remove color</button>
+                  </label>
+                  <br />
+                </div>
+              )
+            })}
+            <button onClick={handleAddColor}>+ Add color</button>
+            <br />
+            Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
+            <br />
+            Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
+          </div>
 
-      {/* Control panel */}
-      < hr />
-      <div>
-        Color Palette: <div />
-        {state.color.map((c) => {
-          const key = c.key;
-          const id = "color_input_" + String(key);
-          return (
-            <div>
-              <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(key)} />
-              <label htmlFor={id}>
-                <input type="color" value={c.value} onChange={handleColorChange(key)} />
-                <button onClick={handleRemoveColor(key)}>x Remove color</button>
-              </label>
-              <br />
-            </div>
-          )
-        })}
-        <button onClick={handleAddColor}>+ Add color</button>
-        <br />
-        Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
-        <br />
-        Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
+          {/* Canvases */}
+          <div className="col">
+            <div style={{ position: "relative" }}>
+              <canvas ref={BGCanvasRef} height={height} width={width} />
+              <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={{ position: "absolute", top: "0", left: "0" }} />
+            </div >
+          </div>
+        </div>
       </div>
     </div >
   );
