@@ -254,28 +254,28 @@ function Editor() {
       </nav >
 
       <div className="container">
-        <div className="row">
+        <div className="row mt-3">
           {/* Control panel */}
+
+          {/* Palette */}
           <div className="col">
-            Color Palette: <div />
-            {state.color.map((c) => {
-              const key = c.key;
-              const id = "color_input_" + String(key);
-              return (
-                <div>
-                  <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(key)} />
-                  <label htmlFor={id}>
+            <div className="list-group">
+              {state.color.map((c) => {
+                const key = c.key;
+                const id = "color_input_" + String(key);
+                return (
+                  <label htmlFor={id} className="list-group-item" style={{ cursor: "pointer" }}>
+                    <input type="radio" id={id} name="color_input" onChange={handleColorSelectedChange(key)} />
                     <input type="color" value={c.value} onChange={handleColorChange(key)} />
-                    <button onClick={handleRemoveColor(key)}>x Remove color</button>
+                    <button className="btn-close" onClick={handleRemoveColor(key)}></button>
                   </label>
-                  <br />
-                </div>
-              )
-            })}
-            <button onClick={handleAddColor}>+ Add color</button>
-            <br />
+                )
+              })}
+              <button className="list-group-item" onClick={handleAddColor}>+ Add color</button>
+            </div>
+            <hr />
             Eraser: <input type="checkbox" checked={state.eraserEnabled} onChange={handleEraserChange} />
-            <br />
+            <hr />
             Image URL: <input type="text" value={state.imageURL} onChange={handleImageURLChange} />
           </div>
 
