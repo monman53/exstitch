@@ -1,6 +1,14 @@
 import React from "react";
 import { StateContext } from "./State"
 
+export interface GridStateType {
+  visible: boolean,
+};
+
+export const initGridState: GridStateType = {
+  visible: true,
+};
+
 export function GridEditor() {
 
   const stateContext = React.useContext(StateContext)

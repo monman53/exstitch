@@ -1,6 +1,22 @@
 import React from "react";
 import { StateContext } from "./State"
 
+export interface PaletteStateType {
+  brushType: number, // TODO: Use enum
+  colors: {
+    key: number, value: string
+  }[],
+  selected: number,
+  idCounter: number,
+};
+
+export const initPaletteState: PaletteStateType = {
+  brushType: 1,
+  colors: [{ key: 0, value: "#000000" }],
+  selected: 0,
+  idCounter: 1,
+}
+
 export function BrushType() {
 
   const stateContext = React.useContext(StateContext)
@@ -9,7 +25,9 @@ export function BrushType() {
 
   const handleBrushTypeChange = (type: number) => {
     return () => {
-      setState({ ...state, brushType: type })
+      let palette = state.palette;
+      palette.brushType = type;
+      setState({ ...state, palette: palette })
     }
   };
 

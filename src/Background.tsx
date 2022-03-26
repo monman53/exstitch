@@ -1,6 +1,20 @@
 import React from "react";
 import { StateContext } from "./State"
 
+export interface BackgroundStateType {
+  imageURL: string,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+};
+
+export const initBackgroundState: BackgroundStateType = {
+  imageURL: "",
+  image: new Image(),
+  x: 0,
+  y: 0,
+}
+
 export function BackgroundCanvas() {
   const stateContext = React.useContext(StateContext)
   const state = stateContext.state;
@@ -14,8 +28,8 @@ export function BackgroundCanvas() {
 
   const renderCanvas = () => {
     const ctx: CanvasRenderingContext2D = getBGContext();
-    const height = state.nh * state.dh;
-    const width = state.nw * state.dw;
+    const height = state.cloth.nh * state.cloth.dh;
+    const width = state.cloth.nw * state.cloth.dw;
     ctx.clearRect(0, 0, width, height);
     ctx.globalAlpha = 0.4;
     if (state.background.image instanceof Image) {
@@ -27,8 +41,8 @@ export function BackgroundCanvas() {
     renderCanvas();
   });
 
-  const height = state.dh * state.nh;
-  const width = state.dw * state.nw;
+  const height = state.cloth.dh * state.cloth.nh;
+  const width = state.cloth.dw * state.cloth.nw;
 
   return (
     <canvas ref={CanvasRef} height={height} width={width} />
