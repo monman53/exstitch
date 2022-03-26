@@ -7,7 +7,9 @@ Visit https://monman53.github.io/exstitch/
 ## Development
 
 * install `npm`
-* `npm start` for debugging
+* `npm install`
+* `npm start`: For debugging
+* `npm run deploy`: Deploy to GitHub Pages (authorized user only)
 
 <!-- # Set up logs
 
