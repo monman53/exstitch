@@ -9,10 +9,12 @@ import { ImageURL, BackgroundCanvas } from "./Background";
 import { ClothCanvas } from "./Cloth";
 
 function Editor() {
+  // Prepare state and context
   const [state, setState] = React.useState(initialState);
   const valueStateContext = { state: state, setState: setState };
 
   return (
+    // Use StateContext
     <StateContext.Provider value={valueStateContext}>
       <div>
         {/* Header */}
