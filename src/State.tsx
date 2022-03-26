@@ -6,8 +6,6 @@ interface State {
   nw: number,
   nh: number,
   data: number[],
-  imageURL: string,
-  image: HTMLImageElement,
   brushType: number, // TODO: Use enum
   palette: {
     colors: {
@@ -16,6 +14,12 @@ interface State {
     selected: number,
     idCounter: number,
   }
+  background: {
+    imageURL: string,
+    image: HTMLImageElement,
+    x: number,
+    y: number,
+  },
   grid: {
     visible: boolean,
   },
@@ -38,13 +42,17 @@ export const initialState: State = {
   nw: nw,
   nh: nh,
   data: data,
-  imageURL: "",
-  image: new Image(),
   brushType: 1,
   palette: {
     colors: [{ key: 0, value: "#000000" }],
     selected: 0,
     idCounter: 1,
+  },
+  background: {
+    imageURL: "",
+    image: new Image(),
+    x: 0,
+    y: 0,
   },
   grid: {
     visible: true,

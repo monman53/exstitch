@@ -18,8 +18,8 @@ export function BackgroundCanvas() {
     const width = state.nw * state.dw;
     ctx.clearRect(0, 0, width, height);
     ctx.globalAlpha = 0.4;
-    if (state.image instanceof Image) {
-      ctx.drawImage(state.image, 0, 0)
+    if (state.background.image instanceof Image) {
+      ctx.drawImage(state.background.image, state.background.x, state.background.y)
     }
   }
 
@@ -41,24 +41,43 @@ export function ImageURL() {
   const setState = stateContext.setState;
 
   const handleImageURLChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let background = state.background;
+
     // Get new imageURL
-    const url = event.target.value;
-    setState({ ...state, imageURL: url })
+    background.imageURL = event.target.value;
+    setState({ ...state, background: background });
 
     // Load image
     let image = new Image();
-    image.src = url;
+    image.src = background.imageURL;
     image.onload = () => {
-      setState({ ...state, image: image, imageURL: url })
+      background.image = image;
+      setState({ ...state, background: background });
     };
     image.onerror = () => {
-      setState({ ...state, image: new Image(), imageURL: url })
+      background.image = new Image();
+      setState({ ...state, background: background });
     };
   };
 
+  const handlePositionChange = (dx: number, dy: number) => {
+    return () => {
+      let background = state.background;
+      background.x += dx;
+      background.y += dy;
+      setState({ ...state, background: background });
+    }
+  }
+
   return (
     <div>
-      Image URL: <input className="form-control" type="text" value={state.imageURL} onChange={handleImageURLChange} />
+      Image URL: <input className="form-control" type="text" value={state.background.imageURL} onChange={handleImageURLChange} />
+      <div className="btn-group my-2" role="group">
+        <button className="btn btn-outline-secondary" onClick={handlePositionChange(-1, 0)}>←</button>
+        <button className="btn btn-outline-secondary" onClick={handlePositionChange(0, -1)}>↑</button>
+        <button className="btn btn-outline-secondary" onClick={handlePositionChange(0, 1)}>↓</button>
+        <button className="btn btn-outline-secondary" onClick={handlePositionChange(1, 0)}>→</button>
+      </div>
     </div>
   );
 };
