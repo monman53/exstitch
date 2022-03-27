@@ -8,6 +8,7 @@ export interface ClothStateType {
   nh: number,
   data: number[],
   cellStyle: string, // "cross", "rect"
+  mouseDown: boolean,
 };
 
 const dh = 7;
@@ -28,6 +29,7 @@ export const initClothState: ClothStateType = {
   nh: nh,
   data: data,
   cellStyle: "cross",
+  mouseDown: false,
 };
 
 // TODO: Same as Palette::BrushType ?
@@ -147,6 +149,25 @@ export function ClothCanvas(props: any) {
     setState({ ...state, cloth })
   };
 
+  const handleMouseDown = (event: React.MouseEvent<HTMLElement>) => {
+    let cloth = state.cloth;
+    cloth.mouseDown = true;
+    setState({ ...state, cloth })
+
+  }
+
+  const handleMouseUp = (event: React.MouseEvent<HTMLElement>) => {
+    let cloth = state.cloth;
+    cloth.mouseDown = false;
+    setState({ ...state, cloth })
+  }
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
+    if (state.cloth.mouseDown) {
+      handleOnClick(event);
+    }
+  }
+
   React.useEffect(() => {
     renderCanvas();
   });
@@ -155,6 +176,10 @@ export function ClothCanvas(props: any) {
   const width = state.cloth.dw * state.cloth.nw;
 
   return (
-    <canvas ref={canvasRef} height={height} width={width} onClick={handleOnClick} style={props.style} />
+    <canvas ref={canvasRef} height={height} width={width} style={props.style}
+      onClick={handleOnClick}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove} />
   );
 };
