@@ -159,7 +159,7 @@ export function ClothCanvas(props: any) {
     // Change grid state (fill one cell)
     let cloth = state.cloth;
     const color = cloth.data[i * state.cloth.nw + j];
-    if (color === -1) {
+    if (color === -1 || state.palette.brushType == 0) {
       cloth.data[i * state.cloth.nw + j] = next_state
       setState({ ...state, cloth })
     }
