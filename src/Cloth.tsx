@@ -7,6 +7,7 @@ export interface ClothStateType {
   nw: number,
   nh: number,
   data: number[],
+  cellStyle: string, // "cross", "rect"
 };
 
 const dh = 7;
@@ -26,6 +27,31 @@ export const initClothState: ClothStateType = {
   nw: nw,
   nh: nh,
   data: data,
+  cellStyle: "cross",
+};
+
+// TODO: Same as Palette::BrushType ?
+export function CellStyle() {
+  const stateContext = React.useContext(StateContext)
+  const state = stateContext.state;
+  const setState = stateContext.setState;
+
+  const handleCellStyleChange = (style: string) => {
+    return () => {
+      let cloth = state.cloth;
+      cloth.cellStyle = style;
+      setState({ ...state, cloth: cloth })
+    }
+  };
+
+  return (
+    <div className="btn-group" role="group">
+      <input type="radio" className="btn-check" id="cell-style-radio1" onClick={handleCellStyleChange("cross")} checked={state.cloth.cellStyle === "cross"} />
+      <label className="btn btn-outline-secondary" htmlFor="cell-style-radio1">Cross</label>
+      <input type="radio" className="btn-check" id="cell-style-radio2" onClick={handleCellStyleChange("rect")} checked={state.cloth.cellStyle === "rect"} />
+      <label className="btn btn-outline-secondary" htmlFor="cell-style-radio2">Rect</label>
+    </div>
+  );
 };
 
 export function ClothCanvas(props: any) {
@@ -55,8 +81,20 @@ export function ClothCanvas(props: any) {
           //TODO: Optimize here
           const color = state.palette.columns[column_idx].colors.find(color => color.key === palette_id);
           if (color !== undefined) {
-            ctx.fillStyle = color.value;
-            ctx.fillRect(w, h, state.cloth.dw, state.cloth.dh)
+            if (state.cloth.cellStyle === "cross") {
+              ctx.strokeStyle = color.value;
+              ctx.lineWidth = 2.4;
+              const d = 0.7;
+              ctx.beginPath();
+              ctx.moveTo(w + d, h + d);
+              ctx.lineTo(w + state.cloth.dw - d, h + state.cloth.dh - d);
+              ctx.moveTo(w + state.cloth.dw - d, h + d);
+              ctx.lineTo(w + 1, h + state.cloth.dh - d);
+              ctx.stroke();
+            } else if (state.cloth.cellStyle === "rect") {
+              ctx.fillStyle = color.value;
+              ctx.fillRect(w, h, state.cloth.dw, state.cloth.dh)
+            }
           }
         }
       }

@@ -6,7 +6,7 @@ import { initialState, StateContext } from "./State";
 import { BrushType, Palette } from "./Palette";
 import { GridEditor } from "./Grid";
 import { ImageURL, BackgroundCanvas } from "./Background";
-import { ClothCanvas } from "./Cloth";
+import { CellStyle, ClothCanvas } from "./Cloth";
 
 function Editor() {
   // Prepare state and context
@@ -25,11 +25,17 @@ function Editor() {
             {/* Control panel */}
             <div className="col">
               {/* Brush type */}
-              <BrushType></BrushType>
+              <div>
+                Edit mode: <BrushType></BrushType>
+              </div>
+              <div className="mt-2">
+                Cell type: <CellStyle></CellStyle>
+              </div>
               <hr />
 
               {/* Color palette */}
               <Palette></Palette>
+
               <hr />
 
               {/* Image URL */}
