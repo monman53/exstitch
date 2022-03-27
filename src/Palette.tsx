@@ -150,7 +150,13 @@ export function Palette() {
           column.colors.splice(array_idx, 1);
         }
       }
-      setState({ ...state, palette: palette })
+      const cloth = state.cloth;
+      for (let k = 0; k < cloth.nh * cloth.nw; k++) {
+        if (cloth.data[k] === key) {
+          cloth.data[k] = -1;
+        }
+      }
+      setState({ ...state, palette: palette, cloth: cloth })
     }
   }
 
