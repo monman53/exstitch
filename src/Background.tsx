@@ -6,6 +6,7 @@ export interface BackgroundStateType {
   image: HTMLImageElement,
   x: number,
   y: number,
+  p: number
 };
 
 export const initBackgroundState: BackgroundStateType = {
@@ -13,6 +14,7 @@ export const initBackgroundState: BackgroundStateType = {
   image: new Image(),
   x: 0,
   y: 0,
+  p: 1
 }
 
 export function BackgroundCanvas() {
@@ -31,9 +33,10 @@ export function BackgroundCanvas() {
     const height = state.cloth.nh * state.cloth.dh;
     const width = state.cloth.nw * state.cloth.dw;
     ctx.clearRect(0, 0, width, height);
-    ctx.globalAlpha = 0.4;
+    // Set background transparency
+    ctx.globalAlpha = 0.6;
     if (state.background.image instanceof Image) {
-      ctx.drawImage(state.background.image, state.background.x, state.background.y)
+      ctx.drawImage(state.background.image, state.background.x, state.background.y, state.background.image.naturalWidth*state.background.p, state.background.image.naturalHeight*state.background.p)
     }
   }
 
@@ -83,6 +86,15 @@ export function ImageURL() {
     }
   }
 
+  // change image scale by setting percentage
+  const scaleChange = (dp: number) => {
+    return () => {
+      let background = state.background;
+      background.p += dp;
+      setState({ ...state, background: background });
+    }
+  }
+
   return (
     <div>
       Image URL: <input className="form-control" type="text" value={state.background.imageURL} onChange={handleImageURLChange} />
@@ -91,6 +103,8 @@ export function ImageURL() {
         <button className="btn btn-outline-secondary" onClick={handlePositionChange(0, -1)}>↑</button>
         <button className="btn btn-outline-secondary" onClick={handlePositionChange(0, 1)}>↓</button>
         <button className="btn btn-outline-secondary" onClick={handlePositionChange(1, 0)}>→</button>
+        <button className="btn btn-outline-secondary" onClick={scaleChange(0.01)}>+</button>
+        <button className="btn btn-outline-secondary" onClick={scaleChange(-0.01)}>-</button>
       </div>
     </div>
   );
