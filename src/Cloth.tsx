@@ -101,15 +101,19 @@ export function ClothCanvas(props: any) {
     }
 
     if (state.grid.visible) {
+      ctx.fillStyle = "#000000";
+      const alpha_normal = 0.1;
+      const alpha_bold = 0.3;
       // Grids
       for (let i = 0; i < state.cloth.nh; i++) {
-        ctx.fillStyle = i % 10 === 0 ? "#ddd" : "#eee";
+        ctx.globalAlpha = i % 10 === 0 ? alpha_bold : alpha_normal;
         ctx.fillRect(0, i * state.cloth.dh, width, 1);
       }
       for (let j = 0; j < state.cloth.nw; j++) {
-        ctx.fillStyle = j % 10 === 0 ? "#ddd" : "#eee";
+        ctx.globalAlpha = j % 10 === 0 ? alpha_bold : alpha_normal;
         ctx.fillRect(j * state.cloth.dw, 0, 1, height);
       }
+      ctx.globalAlpha = 1;
     }
   };
 
