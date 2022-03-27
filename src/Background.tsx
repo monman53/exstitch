@@ -99,12 +99,12 @@ export function ImageURL() {
     <div>
       Image URL: <input className="form-control" type="text" value={state.background.imageURL} onChange={handleImageURLChange} />
       <div className="btn-group my-2" role="group">
-        <button className="btn btn-outline-secondary" onClick={handlePositionChange(-1, 0)}>←</button>
-        <button className="btn btn-outline-secondary" onClick={handlePositionChange(0, -1)}>↑</button>
-        <button className="btn btn-outline-secondary" onClick={handlePositionChange(0, 1)}>↓</button>
-        <button className="btn btn-outline-secondary" onClick={handlePositionChange(1, 0)}>→</button>
-        <button className="btn btn-outline-secondary" onClick={scaleChange(0.01)}>+</button>
-        <button className="btn btn-outline-secondary" onClick={scaleChange(-0.01)}>-</button>
+        <button className="btn btn-outline-secondary" onClick={handlePositionChange(-1, 0)}><i className="bi bi-arrow-left"></i></button>
+        <button className="btn btn-outline-secondary" onClick={handlePositionChange(0, -1)}><i className="bi bi-arrow-up"></i></button>
+        <button className="btn btn-outline-secondary" onClick={handlePositionChange(0, 1)}><i className="bi bi-arrow-down"></i></button>
+        <button className="btn btn-outline-secondary" onClick={handlePositionChange(1, 0)}><i className="bi bi-arrow-right"></i></button>
+        <button className="btn btn-outline-secondary" onClick={scaleChange(-0.01)}><i className="bi bi-zoom-out"></i></button>
+        <button className="btn btn-outline-secondary" onClick={scaleChange(0.01)}><i className="bi bi-zoom-in"></i></button>
       </div>
     </div>
   );
