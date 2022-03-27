@@ -48,10 +48,9 @@ export function BrushType() {
 
   return (
     <div className="btn-group" role="group">
-      <input type="radio" className="btn-check" name="btnradio" id="btnradio1" onClick={handleBrushTypeChange(1)} />
+      <input type="radio" className="btn-check" name="btnradio" id="btnradio1" onClick={handleBrushTypeChange(1)} checked={state.palette.brushType === 1} />
       <label className="btn btn-outline-secondary" htmlFor="btnradio1">Brush</label>
-
-      <input type="radio" className="btn-check" name="btnradio" id="btnradio2" onClick={handleBrushTypeChange(0)} />
+      <input type="radio" className="btn-check" name="btnradio" id="btnradio2" onClick={handleBrushTypeChange(0)} checked={state.palette.brushType === 0} />
       <label className="btn btn-outline-secondary" htmlFor="btnradio2">Eraser</label>
     </div>
   );
@@ -67,9 +66,11 @@ export function Palette() {
     return () => {
       let palette = state.palette;
       palette.selectedColumns = column_key;
-      const column_idx = palette.columns.findIndex(column => column.key === column_key);
-      palette.columns[column_idx].selected = key;
-      setState({ ...state, palette: palette })
+      let column = palette.columns.find(column => column.key === column_key);
+      if (column !== undefined) {
+        column.selected = key;
+        setState({ ...state, palette: palette })
+      }
     }
   };
 
@@ -84,15 +85,17 @@ export function Palette() {
   const handleColorChange = (column_key: number, key: number) => {
     return (event: React.ChangeEvent<HTMLInputElement>) => {
       const new_color = event.target.value;
-      const palette = state.palette;
+      let palette = state.palette;
       //TODO: Optimize here
-      const column_idx = palette.columns.findIndex(column => column.key === column_key);
-      const array_idx = palette.columns[column_idx].colors.findIndex(color => color.key === key);
-      if (array_idx !== -1) {
-        palette.selectedColumns = column_key;
-        palette.columns[column_idx].selected = key;
-        palette.columns[column_idx].colors[array_idx].value = new_color;
-        setState({ ...state, palette: palette })
+      let column = palette.columns.find(column => column.key === column_key);
+      if (column !== undefined) {
+        const array_idx = column.colors.findIndex(color => color.key === key);
+        if (array_idx !== -1) {
+          palette.selectedColumns = column_key;
+          column.selected = key;
+          column.colors[array_idx].value = new_color;
+          setState({ ...state, palette: palette })
+        }
       }
     }
   };
@@ -121,6 +124,7 @@ export function Palette() {
       if (column_idx !== -1) {
         // Delete one element
         palette.columns.splice(column_idx, 1);
+        palette.selectedColumns = palette.columns[palette.columns.length - 1].key;
       }
       setState({ ...state, palette: palette })
     }
@@ -188,7 +192,7 @@ export function Palette() {
                 })}
                 <button className="list-group-item" onClick={handleAddColor}>+ Add color</button>
               </div>
-              <button className="btn btn-outline-secondary mt-2" onClick={handleRemoveColumn(column.key)}>Remove column</button>
+              {state.palette.columns.length > 1 && <button className="btn btn-outline-secondary mt-2" onClick={handleRemoveColumn(column.key)}>Remove column</button>}
             </div>
           );
         })}
