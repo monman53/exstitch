@@ -9,6 +9,10 @@ export interface ClothStateType {
   data: number[],
   cellStyle: string, // "cross", "rect"
   mouseDown: boolean,
+  mouse: {
+    i: number,
+    j: number,
+  }
 };
 
 const dh = 7;
@@ -30,6 +34,10 @@ export const initClothState: ClothStateType = {
   data: data,
   cellStyle: "cross",
   mouseDown: false,
+  mouse: {
+    i: 0,
+    j: 0,
+  }
 };
 
 // TODO: Same as Palette::BrushType ?
@@ -102,11 +110,11 @@ export function ClothCanvas(props: any) {
       }
     }
 
+    // Grids
     if (state.grid.visible) {
       ctx.fillStyle = "#000000";
       const alpha_normal = 0.1;
       const alpha_bold = 0.3;
-      // Grids
       for (let i = 0; i < state.cloth.nh; i++) {
         ctx.globalAlpha = i % 10 === 0 ? alpha_bold : alpha_normal;
         ctx.fillRect(0, i * state.cloth.dh, width, 1);
@@ -117,16 +125,21 @@ export function ClothCanvas(props: any) {
       }
       ctx.globalAlpha = 1;
     }
+
+    // Cell highlight
+    {
+      ctx.strokeStyle = "#0d6efd";
+      ctx.lineWidth = 1;
+      const x = state.cloth.mouse.j * state.cloth.dw;
+      const y = state.cloth.mouse.i * state.cloth.dh;
+      ctx.strokeRect(x, y, state.cloth.dw, state.cloth.dh);
+    }
   };
 
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
     // Calculate relative mouse coordinates (x, y) on canvas.
-    const canvas: any = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const y = event.clientY - rect.top;
-    const x = event.clientX - rect.left;
-    const i = Math.floor(y / state.cloth.dh);
-    const j = Math.floor(x / state.cloth.dw);
+    const i = state.cloth.mouse.i;
+    const j = state.cloth.mouse.j;
 
     const column_idx = state.palette.columns.findIndex(column => column.key === state.palette.selectedColumns);
 
@@ -163,7 +176,19 @@ export function ClothCanvas(props: any) {
   }
 
   const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
-    if (state.cloth.mouseDown) {
+    const canvas: any = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const y = event.clientY - rect.top;
+    const x = event.clientX - rect.left;
+    const i = Math.floor(y / state.cloth.dh);
+    const j = Math.floor(x / state.cloth.dw);
+
+    let cloth = state.cloth;
+    cloth.mouse.i = i;
+    cloth.mouse.j = j;
+    setState({ ...state, cloth })
+
+    if (cloth.mouseDown) {
       handleOnClick(event);
     }
   }
