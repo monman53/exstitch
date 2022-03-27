@@ -45,6 +45,7 @@ export function ClothCanvas(props: any) {
     const height = state.cloth.nh * state.cloth.dh;
     const width = state.cloth.nw * state.cloth.dw;
     ctx.clearRect(0, 0, width, height);
+    const column_idx = state.palette.columns.findIndex(column => column.key === state.palette.selectedColumns);
     for (let i = 0; i < state.cloth.nh; i++) {
       for (let j = 0; j < state.cloth.nw; j++) {
         const h = i * state.cloth.dh;
@@ -52,7 +53,7 @@ export function ClothCanvas(props: any) {
         const palette_id = state.cloth.data[i * state.cloth.nw + j];
         if (palette_id >= 0) {
           //TODO: Optimize here
-          const color = state.palette.colors.find(color => color.key === palette_id);
+          const color = state.palette.columns[column_idx].colors.find(color => color.key === palette_id);
           if (color !== undefined) {
             ctx.fillStyle = color.value;
             ctx.fillRect(w, h, state.cloth.dw, state.cloth.dh)
@@ -83,15 +84,17 @@ export function ClothCanvas(props: any) {
     const i = Math.floor(y / state.cloth.dh);
     const j = Math.floor(x / state.cloth.dw);
 
+    const column_idx = state.palette.columns.findIndex(column => column.key === state.palette.selectedColumns);
+
     let next_state = -1;
     if (state.palette.brushType === 1) {
-      next_state = state.palette.selected;
+      next_state = state.palette.columns[column_idx].selected;
     }
 
     // Ignore when selected color is no longer existed.
-    const colors = state.palette.colors;
+    const colors = state.palette.columns[column_idx].colors;
     //TODO: Optimize here
-    const array_idx = colors.findIndex(color => color.key === state.palette.selected);
+    const array_idx = colors.findIndex(color => color.key === state.palette.columns[column_idx].selected);
     if (array_idx === -1) {
       return;
     }
