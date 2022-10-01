@@ -1,3 +1,5 @@
+<title>exstitch</title>
+
 <script type="importmap">
   {
     "imports": {
@@ -6,7 +8,25 @@
   }
 </script>
 
-<div id="app">{{ message }}</div>
+<div id="app">
+  <h1>Canvas</h1>
+  <div>
+    <canvas :height="height" :width="width"></canvas>
+    <div :height="height" :width="width"></div>
+  </div>
+
+  <h1>Config</h1>
+  n_y: <input v-model="n_y" type="number" step="1" min="0"><br>
+  n_x: <input v-model="n_x" type="number" step="1" min="0"><br>
+
+  <h1>Debug Output</h1>
+  n_y: {{ n_y }} <br>
+  n_x: {{ n_x }} <br>
+  cell_height: {{ cell_height }} <br>
+  cell_width: {{ cell_width }} <br>
+  height: {{ height }} <br>
+  width: {{ width }} <br>
+</div>
 
 <script type="module">
   import { createApp } from 'vue'
@@ -14,8 +34,20 @@
   createApp({
     data() {
       return {
+        n_y: 64,
+        n_x: 64,
+        cell_height: 8,
+        cell_width: 8,
         message: 'Hello Vue!'
       }
+    },
+    computed: {
+      height() {
+        return this.n_y * this.cell_height;
+      },
+      width() {
+        return this.n_x * this.cell_width;
+      },
     }
   }).mount('#app')
 </script>
