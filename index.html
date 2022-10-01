@@ -11,13 +11,17 @@
 <div id="app">
   <h1>Canvas</h1>
   <div>
-    <canvas :height="height" :width="width"></canvas>
-    <div :height="height" :width="width"></div>
+    <svg :height="height" :width="width">
+      <rect v-for="(cell, idx) in cells" :x="idx%n_x*cell_width" :y="Math.floor(idx/n_x)*cell_height"
+        :height="cell_height" :width="cell_width" :fill="cell.color"></rect>
+    </svg>
   </div>
 
   <h1>Config</h1>
   n_y: <input v-model="n_y" type="number" step="1" min="0"><br>
   n_x: <input v-model="n_x" type="number" step="1" min="0"><br>
+  cell_height: <input v-model="cell_height" type="number" step="1" min="0"><br>
+  cell_width: <input v-model="cell_width" type="number" step="1" min="0"><br>
 
   <h1>Debug Output</h1>
   n_y: {{ n_y }} <br>
@@ -32,13 +36,19 @@
   import { createApp } from 'vue'
 
   createApp({
+    mounted() {
+      this.cells = []
+      for (let idx = 0; idx < this.n_y * this.n_x; idx++) {
+        this.cells.push({ color: "red" })
+      }
+    },
     data() {
       return {
         n_y: 64,
         n_x: 64,
         cell_height: 8,
         cell_width: 8,
-        message: 'Hello Vue!'
+        cells: [],
       }
     },
     computed: {
