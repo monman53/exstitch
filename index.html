@@ -57,10 +57,8 @@
 
       //  Canvas initialization
       this.canvas_dom = document.getElementById("main-canvas");
-      let ctx = this.canvas_dom.getContext('2d');
-      // For debug
-      ctx.rect(0, 0, this.width, this.height);
-      ctx.fill();
+      this.canvas_ctx = this.canvas_dom.getContext("2d");
+      this.draw_cell_all();
     },
     data() {
       return {
@@ -75,6 +73,7 @@
           y: 0,
         },
         canvas_dom: undefined,
+        canvas_ctx: undefined,
       }
     },
     computed: {
@@ -97,7 +96,17 @@
         // TODO: Flooring and maxing is workaround.
         this.mouse.x = Math.floor(e.clientX - rect.left);
         this.mouse.y = Math.floor(Math.max(e.clientY - rect.top, 0));
-      }
+      },
+      draw_cell(cell) {
+        this.canvas_ctx.rect(cell.x, cell.y, this.cell_width, this.cell_height);
+        this.canvas_ctx.fillStyle = cell.color;
+        this.canvas_ctx.fill();
+      },
+      draw_cell_all() {
+        for (let idx = 0; idx < this.n_y * this.n_x; idx++) {
+          this.draw_cell(this.cells[idx])
+        }
+      },
     },
     watch: {
     }
