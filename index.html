@@ -9,20 +9,6 @@
 </script>
 
 <div id="app">
-  <h1>Canvas</h1>
-  <div>
-    <svg :height="height" :width="width">
-      <rect v-for="(cell, idx) in cells" :x="idx%n_x*cell_width" :y="Math.floor(idx/n_x)*cell_height"
-        :height="cell_height" :width="cell_width" :fill="cell.color"></rect>
-    </svg>
-  </div>
-
-  <h1>Config</h1>
-  n_y: <input v-model="n_y" type="number" step="1" min="0"><br>
-  n_x: <input v-model="n_x" type="number" step="1" min="0"><br>
-  cell_height: <input v-model="cell_height" type="number" step="1" min="0"><br>
-  cell_width: <input v-model="cell_width" type="number" step="1" min="0"><br>
-
   <h1>Debug Output</h1>
   n_y: {{ n_y }} <br>
   n_x: {{ n_x }} <br>
@@ -30,6 +16,25 @@
   cell_width: {{ cell_width }} <br>
   height: {{ height }} <br>
   width: {{ width }} <br>
+  palette: {{ palette }} <br>
+  mouse: {{mouse}} <br>
+  mouse_pos_idx: {{mouse_pos_idx}} <br>
+
+  <h1>Canvas</h1>
+  <canvas :height="height" :width="width" @mousemove="mousemove" id="main-canvas"></canvas>
+
+  <h1>Palette</h1>
+  <div>
+    <div v-for="color in palette">
+      <input type="color" v-model="color.value">
+    </div>
+  </div>
+
+  <h1>Config</h1>
+  n_y: <input v-model="n_y" type="number" step="1" min="0"><br>
+  n_x: <input v-model="n_x" type="number" step="1" min="0"><br>
+  cell_height: <input v-model="cell_height" type="number" step="1" min="0"><br>
+  cell_width: <input v-model="cell_width" type="number" step="1" min="0"><br>
 </div>
 
 <script type="module">
@@ -37,10 +42,25 @@
 
   createApp({
     mounted() {
+      // Cells initialization
       this.cells = []
       for (let idx = 0; idx < this.n_y * this.n_x; idx++) {
-        this.cells.push({ color: "red" })
+        let x = idx % this.n_x * this.cell_width;
+        let y = Math.floor(idx / this.n_x) * this.cell_height;
+        this.cells.push({ color: "red", x: x, y: y })
       }
+
+      // Palette initialization
+      this.palette.push({ value: "#ff0000" });
+      this.palette.push({ value: "#00ff00" });
+      this.palette.push({ value: "#0000ff" });
+
+      //  Canvas initialization
+      this.canvas_dom = document.getElementById("main-canvas");
+      let ctx = this.canvas_dom.getContext('2d');
+      // For debug
+      ctx.rect(0, 0, this.width, this.height);
+      ctx.fill();
     },
     data() {
       return {
@@ -49,6 +69,12 @@
         cell_height: 8,
         cell_width: 8,
         cells: [],
+        palette: [],
+        mouse: {
+          x: 0,
+          y: 0,
+        },
+        canvas_dom: undefined,
       }
     },
     computed: {
@@ -58,6 +84,22 @@
       width() {
         return this.n_x * this.cell_width;
       },
+      mouse_pos_idx() {
+        let x_idx = Math.floor(this.mouse.x / this.cell_width);
+        let y_idx = Math.floor(this.mouse.y / this.cell_height);
+
+        return y_idx * this.n_x + x_idx;
+      },
+    },
+    methods: {
+      mousemove(e) {
+        var rect = e.target.getBoundingClientRect();
+        // TODO: Flooring and maxing is workaround.
+        this.mouse.x = Math.floor(e.clientX - rect.left);
+        this.mouse.y = Math.floor(Math.max(e.clientY - rect.top, 0));
+      }
+    },
+    watch: {
     }
   }).mount('#app')
 </script>
