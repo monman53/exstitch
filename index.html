@@ -47,7 +47,8 @@
       for (let idx = 0; idx < this.n_y * this.n_x; idx++) {
         let x = idx % this.n_x * this.cell_width;
         let y = Math.floor(idx / this.n_x) * this.cell_height;
-        this.cells.push({ color: "red", x: x, y: y })
+        let color = "";
+        this.cells.push({ color: color, x: x, y: y })
       }
 
       // Palette initialization
@@ -74,6 +75,7 @@
         },
         canvas_dom: undefined,
         canvas_ctx: undefined,
+        show_grid: true,
       }
     },
     computed: {
@@ -97,18 +99,61 @@
         this.mouse.x = Math.floor(e.clientX - rect.left);
         this.mouse.y = Math.floor(Math.max(e.clientY - rect.top, 0));
       },
-      draw_cell(cell) {
-        this.canvas_ctx.rect(cell.x, cell.y, this.cell_width, this.cell_height);
-        this.canvas_ctx.fillStyle = cell.color;
-        this.canvas_ctx.fill();
+      draw_cell(cell, show_grid, highlighted = false) {
+        let ctx = this.canvas_ctx;
+
+        // Clear cell
+        {
+          ctx.fillStyle = "white";
+          ctx.fillRect(cell.x, cell.y, this.cell_width, this.cell_height);
+        }
+
+        // Draw cloth
+        // {
+        //   let gap = 2;
+        //   ctx.fillStyle = "ivory";
+        //   ctx.fillRect(cell.x + gap, cell.y, this.cell_width - 2 * gap, this.cell_height);
+        //   ctx.fillRect(cell.x, cell.y + gap, this.cell_width, this.cell_height - 2 * gap);
+        // }
+
+        // Fill color
+        if (cell.color != "") {
+          ctx.rect(cell.x, cell.y, this.cell_width, this.cell_height);
+          ctx.fillStyle = cell.color;
+          ctx.fill();
+        }
+
+        // Grid
+        if (show_grid) {
+          let line_width = 1;
+          ctx.beginPath();
+          ctx.lineWidth = line_width;
+          ctx.strokeStyle = "lightgray";
+          ctx.rect(cell.x + line_width / 2, cell.y + line_width / 2, this.cell_width - line_width, this.cell_height - line_width);
+          ctx.stroke();
+        }
+
+        // Outline highlight
+        if (highlighted) {
+          let line_width = 1;
+          ctx.beginPath();
+          ctx.lineWidth = line_width;
+          ctx.strokeStyle = "red";
+          ctx.rect(cell.x + line_width / 2, cell.y + line_width / 2, this.cell_width - line_width, this.cell_height - line_width);
+          ctx.stroke();
+        }
       },
       draw_cell_all() {
         for (let idx = 0; idx < this.n_y * this.n_x; idx++) {
-          this.draw_cell(this.cells[idx])
+          this.draw_cell(this.cells[idx], this.show_grid)
         }
       },
     },
     watch: {
+      mouse_pos_idx(new_val, old_val) {
+        this.draw_cell(this.cells[new_val], this.show_grid, true);
+        this.draw_cell(this.cells[old_val], this.show_grid, false);
+      }
     }
   }).mount('#app')
 </script>
