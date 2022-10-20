@@ -4,25 +4,32 @@ import ReactDOM from "react-dom/client";
 const Canvas = (props) => {
   const canvasRef = useRef(null);
 
-  const draw = (ctx) => {
-    if (props.gridEnabled) {
-      for (let i = 0; i < props.cellN; i++) {
-        if (i % 5 == 0) {
-          ctx.strokeStyle = "#aaa";
+  const draw = (ctx, cellN, cellSize, gridEnabled) => {
+    // Grid drawing
+    if (gridEnabled) {
+      for (let i = 0; i < cellN; i++) {
+        // Color
+        if (i % 10 === 0) {
+          // Major grid
+          ctx.strokeStyle = "#999";
+        } else if (i % 5 === 0) {
+          ctx.strokeStyle = "#ddd";
         } else {
+          // Minor grid
           ctx.strokeStyle = "#eee";
         }
+
         // Horizontal line
         ctx.beginPath();
-        ctx.moveTo(0, i * props.cellSize + 0.5);
-        ctx.lineTo(props.cellN * props.cellSize, i * props.cellSize + 0.5);
+        ctx.moveTo(0, i * cellSize + 0.5);
+        ctx.lineTo(cellN * cellSize, i * cellSize + 0.5);
         ctx.lineWidth = 1;
         ctx.stroke();
 
         // Vertical line
         ctx.beginPath();
-        ctx.moveTo(i * props.cellSize + 0.5, 0);
-        ctx.lineTo(i * props.cellSize + 0.5, props.cellN * props.cellSize);
+        ctx.moveTo(i * cellSize + 0.5, 0);
+        ctx.lineTo(i * cellSize + 0.5, cellN * cellSize);
         ctx.lineWidth = 1;
         ctx.stroke();
       }
@@ -35,7 +42,7 @@ const Canvas = (props) => {
     canvas.height = size;
     canvas.width = size;
     const context = canvas.getContext("2d");
-    draw(context);
+    draw(context, props.cellN, props.cellSize, props.gridEnabled);
   }, [props]);
 
   return <canvas ref={canvasRef} />;
