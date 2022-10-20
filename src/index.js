@@ -6,19 +6,34 @@ const Canvas = (props) => {
 
   const draw = (ctx) => {
     if (props.gridEnabled) {
-      ctx.fillStyle = "#000000";
-    } else {
-      ctx.fillStyle = "#FF0000";
+      for (let i = 0; i < props.cellN; i++) {
+        if (i % 5 == 0) {
+          ctx.strokeStyle = "#aaa";
+        } else {
+          ctx.strokeStyle = "#eee";
+        }
+        // Horizontal line
+        ctx.beginPath();
+        ctx.moveTo(0, i * props.cellSize + 0.5);
+        ctx.lineTo(props.cellN * props.cellSize, i * props.cellSize + 0.5);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Vertical line
+        ctx.beginPath();
+        ctx.moveTo(i * props.cellSize + 0.5, 0);
+        ctx.lineTo(i * props.cellSize + 0.5, props.cellN * props.cellSize);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
     }
-    ctx.beginPath();
-    ctx.arc(50, 100, 20, 0, 2 * Math.PI);
-    ctx.fill();
   };
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.height = props.size;
-    canvas.width = props.size;
+    const size = props.cellN * props.cellSize;
+    canvas.height = size;
+    canvas.width = size;
     const context = canvas.getContext("2d");
     draw(context);
   }, [props]);
@@ -76,7 +91,8 @@ const Root = (props) => {
     <div>
       <h1>exstitch</h1>
       <Canvas
-        size={state.cellN * state.cellSize}
+        cellN={state.cellN}
+        cellSize={state.cellSize}
         gridEnabled={state.gridEnabled}
       />
       <Controlls
