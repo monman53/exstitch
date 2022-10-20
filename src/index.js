@@ -5,7 +5,11 @@ const Canvas = (props) => {
   const canvasRef = useRef(null);
 
   const draw = (ctx) => {
-    ctx.fillStyle = "#000000";
+    if (props.gridEnabled) {
+      ctx.fillStyle = "#000000";
+    } else {
+      ctx.fillStyle = "#FF0000";
+    }
     ctx.beginPath();
     ctx.arc(50, 100, 20, 0, 2 * Math.PI);
     ctx.fill();
@@ -13,8 +17,8 @@ const Canvas = (props) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.height = props.canvasHeight;
-    canvas.width = props.canvasWidth;
+    canvas.height = props.size;
+    canvas.width = props.size;
     const context = canvas.getContext("2d");
     draw(context);
   }, [props]);
@@ -22,62 +26,64 @@ const Canvas = (props) => {
   return <canvas ref={canvasRef} />;
 };
 
-const Textbox = (props) => {
-  return (
-    <input type="text" value={props.value} onChange={props.handler}></input>
-  );
-};
-
 const Controlls = (props) => {
   return (
     <div>
-      <Textbox handler={props.handleCanvasHeight} value={props.canvasHeight} />
-      <Textbox handler={props.handleCanvasWidth} value={props.canvasWidth} />
+      {/* Grid */}
+      <label>
+        Grid:
+        <input
+          type="checkbox"
+          checked={props.gridEnabled}
+          onChange={props.gridEnabledHandler}
+        ></input>
+      </label>
+      <br />
+      {/* Cell Size */}
+      <label>
+        Cell Size (px):
+        <input
+          type="number"
+          step="1"
+          min="1"
+          value={props.cellSize}
+          onChange={props.cellSizeHandler}
+        ></input>
+      </label>
     </div>
   );
 };
 
-// class Root extends React.Component {
 const Root = (props) => {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     canvasHeight: 512,
-  //     canvasWidth: 512,
-  //   };
-  // }
-
+  // States
   const [state, setState] = useState({
+    cellN: 128,
+    cellSize: 5,
     canvasHeight: 512,
     canvasWidth: 512,
+    gridEnabled: true,
   });
 
-  const handleCanvasHeight = (event) => {
-    setState({ ...state, canvasHeight: event.target.value });
+  // Handlers
+  const cellSizeHandler = (event) => {
+    setState({ ...state, cellSize: event.target.value });
   };
-
-  const handleCanvasWidth = (event) => {
-    setState({ ...state, canvasWidth: event.target.value });
+  const gridEnabledHandler = () => {
+    setState({ ...state, gridEnabled: !state.gridEnabled });
   };
-
-  // handleCreator(stateName) {
-  //   return (event) => {
-  //     this.setState({ [stateName]: event.target.value });
-  //   };
-  // }
 
   return (
     <div>
       <h1>exstitch</h1>
       <Canvas
-        canvasHeight={state.canvasHeight}
-        canvasWidth={state.canvasWidth}
+        size={state.cellN * state.cellSize}
+        gridEnabled={state.gridEnabled}
       />
       <Controlls
-        handleCanvasHeight={handleCanvasHeight}
-        handleCanvasWidth={handleCanvasWidth}
-        canvasHeight={state.canvasHeight}
-        canvasWidth={state.canvasWidth}
+        gridEnabled={state.gridEnabled}
+        gridEnabledHandler={gridEnabledHandler}
+        cellSize={state.cellSize}
+        cellSizeHandler={cellSizeHandler}
       />
     </div>
   );
