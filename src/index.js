@@ -1,136 +1,22 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 
-const Canvas = (props) => {
-  const canvasRef = useRef(null);
+import { Canvas } from "./Canvas.js";
+import { Controll } from "./Controll.js";
+import { Palette } from "./Palette.js";
 
-  const draw = (ctx, cellN, cellSize, gridEnabled, mouseI, mouseJ) => {
-    // Grid drawing
-    if (gridEnabled) {
-      for (let i = 0; i < cellN; i++) {
-        // Color
-        if (i % 10 === 0) {
-          // Major grid
-          ctx.strokeStyle = "#999";
-        } else if (i % 5 === 0) {
-          ctx.strokeStyle = "#ddd";
-        } else {
-          // Minor grid
-          ctx.strokeStyle = "#eee";
-        }
-
-        // Horizontal line
-        ctx.beginPath();
-        ctx.moveTo(0, i * cellSize + 0.5);
-        ctx.lineTo(cellN * cellSize, i * cellSize + 0.5);
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // Vertical line
-        ctx.beginPath();
-        ctx.moveTo(i * cellSize + 0.5, 0);
-        ctx.lineTo(i * cellSize + 0.5, cellN * cellSize);
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-    }
-
-    // Highlighted cell
-    ctx.strokeStyle = "#f00";
-    ctx.beginPath();
-    ctx.rect(mouseJ * cellSize, mouseI * cellSize, cellSize, cellSize);
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  };
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const size = props.cellN * props.cellSize;
-    canvas.height = size;
-    canvas.width = size;
-    const context = canvas.getContext("2d");
-    draw(
-      context,
-      props.cellN,
-      props.cellSize,
-      props.gridEnabled,
-      props.mouseI,
-      props.mouseJ
-    );
-  }, [props]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      onMouseMove={props.mouseHandlerCreator(canvasRef)}
-    />
-  );
+const createInitialData = (cellN) => {
+  let data = [];
+  for (let i = 0; i < cellN * cellN; i++) {
+    data.push({ paletteIdx: null, colorIdx: null });
+  }
+  return data;
 };
 
-const Controlls = (props) => {
-  return (
-    <div>
-      {/* Grid */}
-      <label>
-        Grid:
-        <input
-          type="checkbox"
-          checked={props.gridEnabled}
-          onChange={props.gridEnabledHandler}
-        ></input>
-      </label>
-      <br />
-      {/* Cell Size */}
-      <label>
-        Cell Size (px):
-        <input
-          type="number"
-          step="1"
-          min="1"
-          value={props.cellSize}
-          onChange={props.cellSizeHandler}
-        ></input>
-      </label>
-    </div>
-  );
-};
-
-const Palette = (props) => {
-  return (
-    <div>
-      {/* Loop for palettes */}
-      {props.palettes.map((palette, pIdx) => (
-        <div key={pIdx}>
-          <hr />
-          {/* Loop for colors */}
-          {palette.map((color, cIdx) => (
-            <div key={cIdx}>
-              <label>
-                <input
-                  type="color"
-                  value={color.value}
-                  onChange={props.colorHandlerCreator(pIdx, cIdx)}
-                />
-                <input
-                  type="text"
-                  value={color.value}
-                  onChange={props.colorHandlerCreator(pIdx, cIdx)}
-                ></input>
-              </label>
-              <br />
-            </div>
-          ))}
-          <hr />
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const Root = (props) => {
-  // States
-  const [state, setState] = useState({
-    cellN: 128,
+const createInitialState = () => {
+  const cellN = 128;
+  return {
+    cellN: cellN,
     cellSize: 5,
     canvasHeight: 512,
     canvasWidth: 512,
@@ -142,7 +28,14 @@ const Root = (props) => {
     ],
     paletteIdx: 0,
     colorIdx: 0,
-  });
+    data: createInitialData(cellN),
+  };
+};
+
+// Root component
+const Root = (props) => {
+  // States
+  const [state, setState] = useState(createInitialState());
 
   // Handlers
   const cellSizeHandler = (event) => {
@@ -181,8 +74,8 @@ const Root = (props) => {
   return (
     <div>
       <h1>exstitch</h1>
-      {/* Controllers */}
-      <Controlls
+      {/* Controll */}
+      <Controll
         gridEnabled={state.gridEnabled}
         gridEnabledHandler={gridEnabledHandler}
         cellSize={state.cellSize}
