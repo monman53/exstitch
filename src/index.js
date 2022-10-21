@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 const Canvas = (props) => {
   const canvasRef = useRef(null);
 
-  const draw = (ctx, cellN, cellSize, gridEnabled) => {
+  const draw = (ctx, cellN, cellSize, gridEnabled, mouseI, mouseJ) => {
     // Grid drawing
     if (gridEnabled) {
       for (let i = 0; i < cellN; i++) {
@@ -34,6 +34,15 @@ const Canvas = (props) => {
         ctx.stroke();
       }
     }
+
+    // Highlighted cell
+    {
+      ctx.strokeStyle = "#f00";
+      ctx.beginPath();
+      ctx.rect(mouseJ * cellSize, mouseI * cellSize, cellSize, cellSize);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
   };
 
   useEffect(() => {
@@ -42,10 +51,22 @@ const Canvas = (props) => {
     canvas.height = size;
     canvas.width = size;
     const context = canvas.getContext("2d");
-    draw(context, props.cellN, props.cellSize, props.gridEnabled);
+    draw(
+      context,
+      props.cellN,
+      props.cellSize,
+      props.gridEnabled,
+      props.mouseI,
+      props.mouseJ
+    );
   }, [props]);
 
-  return <canvas ref={canvasRef} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      onMouseMove={props.mouseHandlerCreator(canvasRef)}
+    />
+  );
 };
 
 const Controlls = (props) => {
@@ -84,29 +105,52 @@ const Root = (props) => {
     canvasHeight: 512,
     canvasWidth: 512,
     gridEnabled: true,
+    mouseI: 0,
+    mouseJ: 0,
   });
 
   // Handlers
   const cellSizeHandler = (event) => {
     setState({ ...state, cellSize: event.target.value });
   };
+
   const gridEnabledHandler = () => {
     setState({ ...state, gridEnabled: !state.gridEnabled });
+  };
+
+  const mouseHandlerCreator = (canvasRef) => {
+    return (event) => {
+      let rect = canvasRef.current.getBoundingClientRect();
+      let x = event.clientX - rect.left;
+      let y = event.clientY - rect.top;
+      let i = Math.floor(y / state.cellSize);
+      let j = Math.floor(x / state.cellSize);
+
+      if (i !== state.mouseI || j !== state.mouseJ) {
+        setState({ ...state, mouseI: i, mouseJ: j });
+      }
+    };
   };
 
   return (
     <div>
       <h1>exstitch</h1>
-      <Canvas
-        cellN={state.cellN}
-        cellSize={state.cellSize}
-        gridEnabled={state.gridEnabled}
-      />
       <Controlls
         gridEnabled={state.gridEnabled}
         gridEnabledHandler={gridEnabledHandler}
         cellSize={state.cellSize}
         cellSizeHandler={cellSizeHandler}
+      />
+      {/* debug outputs */}
+      {state.mouseI}, {state.mouseJ}
+      <br />
+      <Canvas
+        cellN={state.cellN}
+        cellSize={state.cellSize}
+        gridEnabled={state.gridEnabled}
+        mouseI={state.mouseI}
+        mouseJ={state.mouseJ}
+        mouseHandlerCreator={mouseHandlerCreator}
       />
     </div>
   );
