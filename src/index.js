@@ -36,13 +36,11 @@ const Canvas = (props) => {
     }
 
     // Highlighted cell
-    {
-      ctx.strokeStyle = "#f00";
-      ctx.beginPath();
-      ctx.rect(mouseJ * cellSize, mouseI * cellSize, cellSize, cellSize);
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
+    ctx.strokeStyle = "#f00";
+    ctx.beginPath();
+    ctx.rect(mouseJ * cellSize, mouseI * cellSize, cellSize, cellSize);
+    ctx.lineWidth = 1;
+    ctx.stroke();
   };
 
   useEffect(() => {
@@ -97,6 +95,38 @@ const Controlls = (props) => {
   );
 };
 
+const Palette = (props) => {
+  return (
+    <div>
+      {/* Loop for palettes */}
+      {props.palettes.map((palette, pIdx) => (
+        <div key={pIdx}>
+          <hr />
+          {/* Loop for colors */}
+          {palette.map((color, cIdx) => (
+            <div key={cIdx}>
+              <label>
+                <input
+                  type="color"
+                  value={color.value}
+                  onChange={props.colorHandlerCreator(pIdx, cIdx)}
+                />
+                <input
+                  type="text"
+                  value={color.value}
+                  onChange={props.colorHandlerCreator(pIdx, cIdx)}
+                ></input>
+              </label>
+              <br />
+            </div>
+          ))}
+          <hr />
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const Root = (props) => {
   // States
   const [state, setState] = useState({
@@ -107,6 +137,11 @@ const Root = (props) => {
     gridEnabled: true,
     mouseI: 0,
     mouseJ: 0,
+    palettes: [
+      [{ value: "#ff0000" }, { value: "#00ff00" }, { value: "#0000ff" }],
+    ],
+    paletteIdx: 0,
+    colorIdx: 0,
   });
 
   // Handlers
@@ -120,11 +155,11 @@ const Root = (props) => {
 
   const mouseHandlerCreator = (canvasRef) => {
     return (event) => {
-      let rect = canvasRef.current.getBoundingClientRect();
-      let x = event.clientX - rect.left;
-      let y = event.clientY - rect.top;
-      let i = Math.floor(y / state.cellSize);
-      let j = Math.floor(x / state.cellSize);
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const i = Math.floor(y / state.cellSize);
+      const j = Math.floor(x / state.cellSize);
 
       if (i !== state.mouseI || j !== state.mouseJ) {
         setState({ ...state, mouseI: i, mouseJ: j });
@@ -132,18 +167,36 @@ const Root = (props) => {
     };
   };
 
+  const colorHandlerCreator = (paletteIdx, colorIdx) => {
+    return (event) => {
+      const newColor = event.target.value;
+      const palettes = state.palettes;
+      if (palettes[paletteIdx][colorIdx].value !== newColor) {
+        palettes[paletteIdx][colorIdx].value = newColor;
+        setState({ ...state, palettes: palettes });
+      }
+    };
+  };
+
   return (
     <div>
       <h1>exstitch</h1>
+      {/* Controllers */}
       <Controlls
         gridEnabled={state.gridEnabled}
         gridEnabledHandler={gridEnabledHandler}
         cellSize={state.cellSize}
         cellSizeHandler={cellSizeHandler}
       />
+      {/* Plettes */}
+      <Palette
+        palettes={state.palettes}
+        colorHandlerCreator={colorHandlerCreator}
+      />
       {/* debug outputs */}
       {state.mouseI}, {state.mouseJ}
       <br />
+      {/* Main canvas */}
       <Canvas
         cellN={state.cellN}
         cellSize={state.cellSize}
