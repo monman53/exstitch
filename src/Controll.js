@@ -3,7 +3,7 @@ export const Controll = (props) => {
     <div>
       {/* Grid */}
       <label>
-        Grid:
+        Grid visible:
         <input
           type="checkbox"
           checked={props.gridEnabled}
@@ -13,7 +13,7 @@ export const Controll = (props) => {
       <br />
       {/* Cell Size */}
       <label>
-        Cell Size (px):
+        Cell size (px):
         <input
           type="number"
           step="1"
@@ -25,7 +25,7 @@ export const Controll = (props) => {
       <br />
       {/* Number of cells (one side) */}
       <label>
-        Number of cells on a side:
+        Number of cells on each side:
         <input
           type="number"
           step="1"
@@ -65,6 +65,8 @@ export const Controll = (props) => {
       <br />
       Load saved file:
       <input type="file" accept=".json" onChange={props.loadHandler}></input>
+      <br />
+      (Images is ignored for saving)
     </div>
   );
 };
