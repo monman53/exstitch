@@ -141,6 +141,7 @@ const Root = (props) => {
         colorSelectHandlerCreator={colorSelectHandlerCreator}
         colorAddHandler={colorAddHandler}
         colorRemoveHandlerCreator={colorRemoveHandlerCreator}
+        colorIdx={state.colorIdx}
       />
       {/* debug outputs */}
       {state.mouseI}, {state.mouseJ}

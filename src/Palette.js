@@ -12,6 +12,7 @@ export const Palette = (props) => {
               onClick={props.colorSelectHandlerCreator(pIdx, cIdx)}
             >
               <label>
+                <input type="radio" checked={props.colorIdx === cIdx}></input>
                 <input
                   type="color"
                   value={color.value}
