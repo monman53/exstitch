@@ -35,6 +35,7 @@ export const Controll = (props) => {
         ></input>
       </label>
       <br />
+      <hr />
       {/* Image */}
       <input
         type="checkbox"
@@ -58,6 +59,12 @@ export const Controll = (props) => {
           onChange={props.imageOpacityHandler}
         ></input>
       </label>
+      <hr />
+      {/* Save and Load */}
+      Save to file: <button onClick={props.saveHandler}>Save</button>
+      <br />
+      Load saved file:
+      <input type="file" accept=".json" onChange={props.loadHandler}></input>
     </div>
   );
 };

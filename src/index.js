@@ -157,6 +157,27 @@ const Root = (props) => {
     });
   };
 
+  const saveHandler = () => {
+    const a = document.createElement("a");
+    const stateToSave = state;
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(stateToSave)
+    )}`;
+    a.href = jsonString;
+    a.download = "out.json";
+    a.click();
+  };
+
+  const loadHandler = (event) => {
+    const fileReader = new FileReader();
+    fileReader.readAsText(event.target.files[0], "UTF-8");
+    fileReader.onload = (e) => {
+      const loadedState = JSON.parse(e.target.result);
+      loadedState.image = null;
+      setState(loadedState);
+    };
+  };
+
   const colorRemoveHandlerCreator = (colorKey) => {
     return () => {
       if (!window.confirm("Are you sure you want to remove this color?")) {
@@ -224,6 +245,8 @@ const Root = (props) => {
         imageVisibleHandler={imageVisibleHandler}
         imageOpacity={state.imageOpacity}
         imageOpacityHandler={imageOpacityHandler}
+        saveHandler={saveHandler}
+        loadHandler={loadHandler}
       />
       {/* Plettes */}
       <Palette
