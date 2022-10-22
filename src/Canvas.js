@@ -12,14 +12,18 @@ export const Canvas = (props) => {
     mouseJ,
     palette,
     data,
-    image
+    image,
+    imageVisible,
+    imageOpacity
   ) => {
     // Background image
-    if (image) {
+    ctx.globalAlpha = imageOpacity;
+    if (imageVisible && image) {
       ctx.drawImage(image, 0, 0, cellN * cellSize, cellN * cellSize);
     }
 
     // Cell drawing
+    ctx.globalAlpha = 1.0;
     for (let i = 0; i < cellN; i++) {
       for (let j = 0; j < cellN; j++) {
         const colorIdx = data[i * cellN + j].colorIdx;
@@ -90,7 +94,9 @@ export const Canvas = (props) => {
       props.mouseJ,
       props.palette,
       props.data,
-      props.image
+      props.image,
+      props.imageVisible,
+      props.imageOpacity
     );
   }, [props]);
 

@@ -36,12 +36,26 @@ export const Controll = (props) => {
       </label>
       <br />
       {/* Image */}
+      <input
+        type="checkbox"
+        checked={props.imageVisible}
+        onChange={props.imageVisibleHandler}
+      ></input>
+      Image:
+      <input
+        type="file"
+        accept="image/*"
+        onChange={props.imageLoadHandler}
+      ></input>
       <label>
-        Image:
+        Opacity:
         <input
-          type="file"
-          accept="image/*"
-          onChange={props.imageLoadHandler}
+          type="range"
+          min="0"
+          step="0.01"
+          max="1"
+          value={props.imageOpacity}
+          onChange={props.imageOpacityHandler}
         ></input>
       </label>
     </div>

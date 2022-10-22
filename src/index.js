@@ -31,6 +31,8 @@ const createInitialState = () => {
     data: createInitialData(cellN),
     drawingMode: "brush", // brush, eraser
     image: null,
+    imageOpacity: 0.5,
+    imageVisible: true,
   };
 };
 
@@ -54,6 +56,14 @@ const Root = (props) => {
 
   const gridEnabledHandler = () => {
     setState({ ...state, gridEnabled: !state.gridEnabled });
+  };
+
+  const imageVisibleHandler = () => {
+    setState({ ...state, imageVisible: !state.imageVisible });
+  };
+
+  const imageOpacityHandler = (event) => {
+    setState({ ...state, imageOpacity: event.target.value });
   };
 
   const mouseHandlerCreator = (canvasRef) => {
@@ -176,6 +186,10 @@ const Root = (props) => {
         imageLoadHandler={imageLoadHandler}
         cellN={state.cellN}
         cellNHandler={cellNHandler}
+        imageVisible={state.imageVisible}
+        imageVisibleHandler={imageVisibleHandler}
+        imageOpacity={state.imageOpacity}
+        imageOpacityHandler={imageOpacityHandler}
       />
       {/* Plettes */}
       <Palette
@@ -202,6 +216,8 @@ const Root = (props) => {
         palette={state.palettes[state.paletteIdx]}
         data={state.data}
         image={state.image}
+        imageVisible={state.imageVisible}
+        imageOpacity={state.imageOpacity}
       />
     </div>
   );
