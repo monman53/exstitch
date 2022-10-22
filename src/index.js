@@ -29,6 +29,7 @@ const createInitialState = () => {
     paletteIdx: 0,
     colorIdx: 0,
     data: createInitialData(cellN),
+    drawingMode: "brush", // brush, eraser
   };
 };
 
@@ -58,17 +59,22 @@ const Root = (props) => {
       if (event.buttons === 1) {
         // Left button down
         const colorChanged =
-          state.data[i * state.cellN + j].colorIdx !== state.colorIdx;
+          state.data[i * state.cellN + j].colorIdx !== state.colorIdx ||
+          state.drawingMode === "eraser";
+        let newColorIdx = state.colorIdx;
+        if (state.drawingMode === "eraser") {
+          newColorIdx = null;
+        }
 
         if (mouseMoved && colorChanged) {
           const newData = state.data;
-          newData[i * state.cellN + j].colorIdx = state.colorIdx;
+          newData[i * state.cellN + j].colorIdx = newColorIdx;
           setState({ ...state, mouseI: i, mouseJ: j, data: newData });
         } else if (mouseMoved && !colorChanged) {
           setState({ ...state, mouseI: i, mouseJ: j });
         } else if (!mouseMoved && colorChanged) {
           const newData = state.data;
-          newData[i * state.cellN + j].colorIdx = state.colorIdx;
+          newData[i * state.cellN + j].colorIdx = newColorIdx;
           setState({ ...state, data: newData });
         }
       } else {
@@ -124,6 +130,12 @@ const Root = (props) => {
     };
   };
 
+  const drawingModeHandlerCreator = (newDrawingMode) => {
+    return () => {
+      setState({ ...state, drawingMode: newDrawingMode });
+    };
+  };
+
   return (
     <div>
       <h1>exstitch</h1>
@@ -142,6 +154,8 @@ const Root = (props) => {
         colorAddHandler={colorAddHandler}
         colorRemoveHandlerCreator={colorRemoveHandlerCreator}
         colorIdx={state.colorIdx}
+        drawingMode={state.drawingMode}
+        drawingModeHandlerCreator={drawingModeHandlerCreator}
       />
       {/* debug outputs */}
       {state.mouseI}, {state.mouseJ}

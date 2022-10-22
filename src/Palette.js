@@ -1,6 +1,14 @@
 export const Palette = (props) => {
   return (
     <div>
+      <label onClick={props.drawingModeHandlerCreator("brush")}>
+        <input type="radio" readOnly checked={props.drawingMode === "brush"} />
+        Brush
+      </label>
+      <label onClick={props.drawingModeHandlerCreator("eraser")}>
+        <input type="radio" readOnly checked={props.drawingMode === "eraser"} />
+        Eraser
+      </label>
       {/* Loop for palettes */}
       {props.palettes.map((palette, pIdx) => (
         <div key={pIdx}>
@@ -12,7 +20,11 @@ export const Palette = (props) => {
               onClick={props.colorSelectHandlerCreator(pIdx, cIdx)}
             >
               <label>
-                <input type="radio" checked={props.colorIdx === cIdx}></input>
+                <input
+                  type="radio"
+                  checked={props.colorIdx === cIdx}
+                  readOnly
+                ></input>
                 <input
                   type="color"
                   value={color.value}
