@@ -90,6 +90,12 @@ const Root = (props) => {
     };
   };
 
+  const colorSelectHandlerCreator = (paletteIdx, colorIdx) => {
+    return (event) => {
+      setState({ ...state, paletteIdx: paletteIdx, colorIdx: colorIdx });
+    };
+  };
+
   return (
     <div>
       <h1>exstitch</h1>
@@ -104,6 +110,7 @@ const Root = (props) => {
       <Palette
         palettes={state.palettes}
         colorHandlerCreator={colorHandlerCreator}
+        colorSelectHandlerCreator={colorSelectHandlerCreator}
       />
       {/* debug outputs */}
       {state.mouseI}, {state.mouseJ}

@@ -7,7 +7,10 @@ export const Palette = (props) => {
           <hr />
           {/* Loop for colors */}
           {palette.map((color, cIdx) => (
-            <div key={cIdx}>
+            <div
+              key={cIdx}
+              onClick={props.colorSelectHandlerCreator(pIdx, cIdx)}
+            >
               <label>
                 <input
                   type="color"
