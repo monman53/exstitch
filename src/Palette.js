@@ -17,7 +17,7 @@ export const Palette = (props) => {
           {palette.map((color, cIdx) => (
             <div
               key={cIdx}
-              onClick={props.colorSelectHandlerCreator(pIdx, cIdx)}
+              onMouseDown={props.colorSelectHandlerCreator(pIdx, cIdx)}
             >
               <label>
                 <input

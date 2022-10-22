@@ -11,8 +11,14 @@ export const Canvas = (props) => {
     mouseI,
     mouseJ,
     palette,
-    data
+    data,
+    image
   ) => {
+    // Background image
+    if (image) {
+      ctx.drawImage(image, 0, 0, cellN * cellSize, cellN * cellSize);
+    }
+
     // Cell drawing
     for (let i = 0; i < cellN; i++) {
       for (let j = 0; j < cellN; j++) {
@@ -80,7 +86,8 @@ export const Canvas = (props) => {
       props.mouseI,
       props.mouseJ,
       props.palette,
-      props.data
+      props.data,
+      props.image
     );
   }, [props]);
 

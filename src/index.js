@@ -30,6 +30,7 @@ const createInitialState = () => {
     colorIdx: 0,
     data: createInitialData(cellN),
     drawingMode: "brush", // brush, eraser
+    image: null,
   };
 };
 
@@ -123,16 +124,34 @@ const Root = (props) => {
       }
       // Remove cells filled with removed color
       const newData = state.data;
-      for (const cell of newData) {
-        cell.colorIdx = null;
+      for (let cell of newData) {
+        if (cell.colorIdx === colorIdx) {
+          cell.colorIdx = null;
+        }
       }
-      setState({ ...state, palettes: newPalettes, data: newData });
+      setState({ ...state, colorIdx: 0, palettes: newPalettes, data: newData });
     };
   };
 
   const drawingModeHandlerCreator = (newDrawingMode) => {
     return () => {
       setState({ ...state, drawingMode: newDrawingMode });
+    };
+  };
+
+  const imageLoadHandler = (event) => {
+    console.log("image loaded 0");
+    let imageFile = event.target.files[0];
+    let reader = new FileReader();
+    reader.readAsDataURL(imageFile);
+    reader.onloadend = (e) => {
+      console.log("image loaded 1");
+      let image = new Image();
+      image.src = e.target.result;
+      image.onload = () => {
+        console.log("image loaded 2");
+        setState({ ...state, image: image });
+      };
     };
   };
 
@@ -145,6 +164,8 @@ const Root = (props) => {
         gridEnabledHandler={gridEnabledHandler}
         cellSize={state.cellSize}
         cellSizeHandler={cellSizeHandler}
+        image={state.image}
+        imageLoadHandler={imageLoadHandler}
       />
       {/* Plettes */}
       <Palette
@@ -158,7 +179,7 @@ const Root = (props) => {
         drawingModeHandlerCreator={drawingModeHandlerCreator}
       />
       {/* debug outputs */}
-      {state.mouseI}, {state.mouseJ}
+      mouseI: {state.mouseI}, mouseJ: {state.mouseJ}, colorIdx: {state.colorIdx}
       <br />
       {/* Main canvas */}
       <Canvas
@@ -170,6 +191,7 @@ const Root = (props) => {
         mouseHandlerCreator={mouseHandlerCreator}
         palette={state.palettes[state.paletteIdx]}
         data={state.data}
+        image={state.image}
       />
     </div>
   );

@@ -22,6 +22,16 @@ export const Controll = (props) => {
           onChange={props.cellSizeHandler}
         ></input>
       </label>
+      <br />
+      {/* Image */}
+      <label>
+        Image:
+        <input
+          type="file"
+          accept="image/*"
+          onChange={props.imageLoadHandler}
+        ></input>
+      </label>
     </div>
   );
 };
