@@ -26,9 +26,10 @@ export const Canvas = (props) => {
     ctx.globalAlpha = 1.0;
     for (let i = 0; i < cellN; i++) {
       for (let j = 0; j < cellN; j++) {
-        const colorIdx = data[i * cellN + j].colorIdx;
-        if (colorIdx !== null) {
-          ctx.fillStyle = palette[colorIdx].value;
+        const colorKey = data[i * cellN + j].colorKey;
+        if (colorKey !== null) {
+          const colorIdx = palette.colors.findIndex((x) => x.key === colorKey);
+          ctx.fillStyle = palette.colors[colorIdx].hex;
           ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
         }
       }
@@ -85,6 +86,10 @@ export const Canvas = (props) => {
 
     // Re-drawing canvas contents
     const context = canvas.getContext("2d");
+    const paletteIdx = props.palettes.findIndex(
+      (x) => x.key === props.paletteKey
+    );
+    const palette = props.palettes[paletteIdx];
     draw(
       context,
       props.cellN,
@@ -92,7 +97,7 @@ export const Canvas = (props) => {
       props.gridEnabled,
       props.mouseI,
       props.mouseJ,
-      props.palette,
+      palette,
       props.data,
       props.image,
       props.imageVisible,

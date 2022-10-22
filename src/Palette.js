@@ -10,33 +10,36 @@ export const Palette = (props) => {
         Eraser
       </label>
       {/* Loop for palettes */}
-      {props.palettes.map((palette, pIdx) => (
-        <div key={pIdx}>
+      {props.palettes.map((palette) => (
+        <div key={palette.key}>
           <hr />
           {/* Loop for colors */}
-          {palette.map((color, cIdx) => (
+          {palette.colors.map((color) => (
             <div
-              key={cIdx}
-              onMouseDown={props.colorSelectHandlerCreator(pIdx, cIdx)}
+              key={color.key}
+              onMouseDown={props.colorSelectHandlerCreator(
+                palette.key,
+                color.key
+              )}
             >
               <label>
                 <input
                   type="radio"
-                  checked={props.colorIdx === cIdx}
+                  checked={props.colorKey === color.key}
                   readOnly
                 ></input>
                 <input
                   type="color"
-                  value={color.value}
-                  onChange={props.colorHandlerCreator(pIdx, cIdx)}
+                  value={color.hex}
+                  onChange={props.colorHandlerCreator(palette.key, color.key)}
                 />
                 <input
                   type="text"
-                  value={color.value}
-                  onChange={props.colorHandlerCreator(pIdx, cIdx)}
+                  value={color.hex}
+                  onChange={props.colorHandlerCreator(palette.key, color.key)}
                 ></input>
               </label>
-              <button onClick={props.colorRemoveHandlerCreator(cIdx)}>
+              <button onClick={props.colorRemoveHandlerCreator(color.key)}>
                 Remove
               </button>
               <br />

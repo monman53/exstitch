@@ -8,9 +8,23 @@ import { Palette } from "./Palette.js";
 const createInitialData = (cellN) => {
   let data = [];
   for (let i = 0; i < cellN * cellN; i++) {
-    data.push({ colorIdx: null });
+    data.push({ colorKey: null });
   }
   return data;
+};
+
+const createInitialPalettes = () => {
+  let palettes = [
+    {
+      key: 0,
+      colors: [
+        { key: 0, hex: "#ff0000" },
+        { key: 1, hex: "#00ff00" },
+        { key: 2, hex: "#0000ff" },
+      ],
+    },
+  ];
+  return palettes;
 };
 
 const createInitialState = () => {
@@ -23,11 +37,11 @@ const createInitialState = () => {
     gridEnabled: true,
     mouseI: 0,
     mouseJ: 0,
-    palettes: [
-      [{ value: "#ff0000" }, { value: "#00ff00" }, { value: "#0000ff" }],
-    ],
-    paletteIdx: 0,
-    colorIdx: 0,
+    palettes: createInitialPalettes(),
+    paletteKey: 0,
+    paletteKeyCounter: 1,
+    colorKey: 0,
+    colorKeyCounter: 3,
     data: createInitialData(cellN),
     drawingMode: "brush", // brush, eraser
     image: null,
@@ -78,22 +92,24 @@ const Root = (props) => {
       if (event.buttons === 1) {
         // Left button down
         const colorChanged =
-          state.data[i * state.cellN + j].colorIdx !== state.colorIdx ||
+          (state.data[i * state.cellN + j].colorKey !== state.colorKey &&
+            state.colorKey != null) ||
           state.drawingMode === "eraser";
-        let newColorIdx = state.colorIdx;
+
+        let newColorKey = state.colorKey;
         if (state.drawingMode === "eraser") {
-          newColorIdx = null;
+          newColorKey = null;
         }
 
         if (mouseMoved && colorChanged) {
           const newData = state.data;
-          newData[i * state.cellN + j].colorIdx = newColorIdx;
+          newData[i * state.cellN + j].colorKey = newColorKey;
           setState({ ...state, mouseI: i, mouseJ: j, data: newData });
         } else if (mouseMoved && !colorChanged) {
           setState({ ...state, mouseI: i, mouseJ: j });
         } else if (!mouseMoved && colorChanged) {
           const newData = state.data;
-          newData[i * state.cellN + j].colorIdx = newColorIdx;
+          newData[i * state.cellN + j].colorKey = newColorKey;
           setState({ ...state, data: newData });
         }
       } else {
@@ -104,32 +120,44 @@ const Root = (props) => {
     };
   };
 
-  const colorHandlerCreator = (paletteIdx, colorIdx) => {
+  const colorHandlerCreator = (paletteKey, colorKey) => {
     return (event) => {
       const newColor = event.target.value;
       const palettes = state.palettes;
-      if (palettes[paletteIdx][colorIdx].value !== newColor) {
-        palettes[paletteIdx][colorIdx].value = newColor;
+
+      // Find the color being modified
+      const paletteIdx = palettes.findIndex((x) => x.key === paletteKey);
+      const colorIdx = palettes[paletteIdx].colors.findIndex(
+        (x) => x.key === colorKey
+      );
+      const color = palettes[paletteIdx].colors[colorIdx];
+
+      if (color.hex !== newColor) {
+        color.hex = newColor;
         setState({ ...state, palettes: palettes });
       }
     };
   };
 
-  const colorSelectHandlerCreator = (paletteIdx, colorIdx) => {
+  const colorSelectHandlerCreator = (paletteKey, colorKey) => {
     return (event) => {
-      setState({ ...state, paletteIdx: paletteIdx, colorIdx: colorIdx });
+      setState({ ...state, paletteKey: paletteKey, colorKey: colorKey });
     };
   };
 
   const colorAddHandler = () => {
     const newPalettes = state.palettes;
     for (const palette of newPalettes) {
-      palette.push({ value: "#000000" });
+      palette.colors.push({ key: state.colorKeyCounter, hex: "#000000" });
     }
-    setState({ ...state, palettes: newPalettes });
+    setState({
+      ...state,
+      palettes: newPalettes,
+      colorKeyCounter: state.colorKeyCounter + 1,
+    });
   };
 
-  const colorRemoveHandlerCreator = (colorIdx) => {
+  const colorRemoveHandlerCreator = (colorKey) => {
     return () => {
       if (!window.confirm("Are you sure you want to remove this color?")) {
         return;
@@ -138,16 +166,22 @@ const Root = (props) => {
       // Remove color from all palettes
       const newPalettes = state.palettes;
       for (const palette of newPalettes) {
-        palette.splice(colorIdx, 1);
+        const colorIdx = palette.colors.findIndex((x) => x.key === colorKey);
+        palette.colors.splice(colorIdx, 1);
       }
       // Remove cells filled with removed color
       const newData = state.data;
       for (let cell of newData) {
-        if (cell.colorIdx === colorIdx) {
-          cell.colorIdx = null;
+        if (cell.colorKey === colorKey) {
+          cell.colorKey = null;
         }
       }
-      setState({ ...state, colorIdx: 0, palettes: newPalettes, data: newData });
+      setState({
+        ...state,
+        colorKey: null,
+        palettes: newPalettes,
+        data: newData,
+      });
     };
   };
 
@@ -198,7 +232,7 @@ const Root = (props) => {
         colorSelectHandlerCreator={colorSelectHandlerCreator}
         colorAddHandler={colorAddHandler}
         colorRemoveHandlerCreator={colorRemoveHandlerCreator}
-        colorIdx={state.colorIdx}
+        colorKey={state.colorKey}
         drawingMode={state.drawingMode}
         drawingModeHandlerCreator={drawingModeHandlerCreator}
       />
@@ -213,7 +247,8 @@ const Root = (props) => {
         mouseI={state.mouseI}
         mouseJ={state.mouseJ}
         mouseHandlerCreator={mouseHandlerCreator}
-        palette={state.palettes[state.paletteIdx]}
+        palettes={state.palettes}
+        paletteKey={state.paletteKey}
         data={state.data}
         image={state.image}
         imageVisible={state.imageVisible}
