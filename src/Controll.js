@@ -23,6 +23,18 @@ export const Controll = (props) => {
         ></input>
       </label>
       <br />
+      {/* Number of cells (one side) */}
+      <label>
+        Number of cells on a side:
+        <input
+          type="number"
+          step="1"
+          min="1"
+          value={props.cellN}
+          onChange={props.cellNHandler}
+        ></input>
+      </label>
+      <br />
       {/* Image */}
       <label>
         Image:

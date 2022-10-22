@@ -31,17 +31,19 @@ export const Canvas = (props) => {
     }
 
     // Grid drawing
+    ctx.strokeStyle = "#000000";
     if (gridEnabled) {
       for (let i = 0; i < cellN; i++) {
         // Color
         if (i % 10 === 0) {
           // Major grid
-          ctx.strokeStyle = "#999";
+          ctx.globalAlpha = 0.8;
         } else if (i % 5 === 0) {
-          ctx.strokeStyle = "#ddd";
+          // Middle grid
+          ctx.globalAlpha = 0.4;
         } else {
           // Minor grid
-          ctx.strokeStyle = "#eee";
+          ctx.globalAlpha = 0.2;
         }
 
         // Horizontal line
@@ -61,6 +63,7 @@ export const Canvas = (props) => {
     }
 
     // Highlighted cell
+    ctx.globalAlpha = 0.8;
     ctx.strokeStyle = "#f00";
     ctx.beginPath();
     ctx.rect(mouseJ * cellSize, mouseI * cellSize, cellSize, cellSize);

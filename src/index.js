@@ -14,10 +14,10 @@ const createInitialData = (cellN) => {
 };
 
 const createInitialState = () => {
-  const cellN = 128;
+  const cellN = 64;
   return {
     cellN: cellN,
-    cellSize: 5,
+    cellSize: 10,
     canvasHeight: 512,
     canvasWidth: 512,
     gridEnabled: true,
@@ -42,6 +42,14 @@ const Root = (props) => {
   // Handlers
   const cellSizeHandler = (event) => {
     setState({ ...state, cellSize: event.target.value });
+  };
+
+  const cellNHandler = (event) => {
+    const newCellN = event.target.value;
+    if (newCellN !== state.cellN) {
+      const newData = createInitialData(newCellN);
+      setState({ ...state, cellN: newCellN, data: newData });
+    }
   };
 
   const gridEnabledHandler = () => {
@@ -166,6 +174,8 @@ const Root = (props) => {
         cellSizeHandler={cellSizeHandler}
         image={state.image}
         imageLoadHandler={imageLoadHandler}
+        cellN={state.cellN}
+        cellNHandler={cellNHandler}
       />
       {/* Plettes */}
       <Palette
