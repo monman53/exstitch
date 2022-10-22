@@ -23,9 +23,13 @@ export const Palette = (props) => {
                   onChange={props.colorHandlerCreator(pIdx, cIdx)}
                 ></input>
               </label>
+              <button onClick={props.colorRemoveHandlerCreator(cIdx)}>
+                Remove
+              </button>
               <br />
             </div>
           ))}
+          <button onClick={props.colorAddHandler}>Add Color</button>
           <hr />
         </div>
       ))}

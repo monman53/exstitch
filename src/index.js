@@ -96,6 +96,34 @@ const Root = (props) => {
     };
   };
 
+  const colorAddHandler = () => {
+    const newPalettes = state.palettes;
+    for (const palette of newPalettes) {
+      palette.push({ value: "#000000" });
+    }
+    setState({ ...state, palettes: newPalettes });
+  };
+
+  const colorRemoveHandlerCreator = (colorIdx) => {
+    return () => {
+      if (!window.confirm("Are you sure you want to remove this color?")) {
+        return;
+      }
+
+      // Remove color from all palettes
+      const newPalettes = state.palettes;
+      for (const palette of newPalettes) {
+        palette.splice(colorIdx, 1);
+      }
+      // Remove cells filled with removed color
+      const newData = state.data;
+      for (const cell of newData) {
+        cell.colorIdx = null;
+      }
+      setState({ ...state, palettes: newPalettes, data: newData });
+    };
+  };
+
   return (
     <div>
       <h1>exstitch</h1>
@@ -111,6 +139,8 @@ const Root = (props) => {
         palettes={state.palettes}
         colorHandlerCreator={colorHandlerCreator}
         colorSelectHandlerCreator={colorSelectHandlerCreator}
+        colorAddHandler={colorAddHandler}
+        colorRemoveHandlerCreator={colorRemoveHandlerCreator}
       />
       {/* debug outputs */}
       {state.mouseI}, {state.mouseJ}
