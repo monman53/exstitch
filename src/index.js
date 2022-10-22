@@ -8,7 +8,7 @@ import { Palette } from "./Palette.js";
 const createInitialData = (cellN) => {
   let data = [];
   for (let i = 0; i < cellN * cellN; i++) {
-    data.push({ paletteIdx: null, colorIdx: null });
+    data.push({ colorIdx: null });
   }
   return data;
 };
@@ -53,9 +53,28 @@ const Root = (props) => {
       const y = event.clientY - rect.top;
       const i = Math.floor(y / state.cellSize);
       const j = Math.floor(x / state.cellSize);
+      const mouseMoved = i !== state.mouseI || j !== state.mouseJ;
 
-      if (i !== state.mouseI || j !== state.mouseJ) {
-        setState({ ...state, mouseI: i, mouseJ: j });
+      if (event.buttons === 1) {
+        // Left button down
+        const colorChanged =
+          state.data[i * state.cellN + j].colorIdx !== state.colorIdx;
+
+        if (mouseMoved && colorChanged) {
+          const newData = state.data;
+          newData[i * state.cellN + j].colorIdx = state.colorIdx;
+          setState({ ...state, mouseI: i, mouseJ: j, data: newData });
+        } else if (mouseMoved && !colorChanged) {
+          setState({ ...state, mouseI: i, mouseJ: j });
+        } else if (!mouseMoved && colorChanged) {
+          const newData = state.data;
+          newData[i * state.cellN + j].colorIdx = state.colorIdx;
+          setState({ ...state, data: newData });
+        }
+      } else {
+        if (mouseMoved) {
+          setState({ ...state, mouseI: i, mouseJ: j });
+        }
       }
     };
   };
@@ -97,6 +116,8 @@ const Root = (props) => {
         mouseI={state.mouseI}
         mouseJ={state.mouseJ}
         mouseHandlerCreator={mouseHandlerCreator}
+        palette={state.palettes[state.paletteIdx]}
+        data={state.data}
       />
     </div>
   );

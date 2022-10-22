@@ -3,7 +3,27 @@ import React, { useRef, useEffect } from "react";
 export const Canvas = (props) => {
   const canvasRef = useRef(null);
 
-  const draw = (ctx, cellN, cellSize, gridEnabled, mouseI, mouseJ) => {
+  const draw = (
+    ctx,
+    cellN,
+    cellSize,
+    gridEnabled,
+    mouseI,
+    mouseJ,
+    palette,
+    data
+  ) => {
+    // Cell drawing
+    for (let i = 0; i < cellN; i++) {
+      for (let j = 0; j < cellN; j++) {
+        const colorIdx = data[i * cellN + j].colorIdx;
+        if (colorIdx !== null) {
+          ctx.fillStyle = palette[colorIdx].value;
+          ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
     // Grid drawing
     if (gridEnabled) {
       for (let i = 0; i < cellN; i++) {
@@ -58,7 +78,9 @@ export const Canvas = (props) => {
       props.cellSize,
       props.gridEnabled,
       props.mouseI,
-      props.mouseJ
+      props.mouseJ,
+      props.palette,
+      props.data
     );
   }, [props]);
 
@@ -66,6 +88,7 @@ export const Canvas = (props) => {
     <canvas
       ref={canvasRef}
       onMouseMove={props.mouseHandlerCreator(canvasRef)}
+      onMouseDown={props.mouseHandlerCreator(canvasRef)}
     />
   );
 };
