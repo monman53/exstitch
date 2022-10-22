@@ -92,7 +92,7 @@ const Root = (props) => {
       if (event.buttons === 1) {
         // Left button down
         const colorChanged =
-          (state.data[i * state.cellN + j].colorKey !== state.colorKey &&
+          (state.data[i * state.cellN + j].colorKey === null &&
             state.colorKey != null) ||
           state.drawingMode === "eraser";
 
@@ -236,9 +236,6 @@ const Root = (props) => {
         drawingMode={state.drawingMode}
         drawingModeHandlerCreator={drawingModeHandlerCreator}
       />
-      {/* debug outputs */}
-      mouseI: {state.mouseI}, mouseJ: {state.mouseJ}, colorIdx: {state.colorIdx}
-      <br />
       {/* Main canvas */}
       <Canvas
         cellN={state.cellN}
@@ -254,6 +251,12 @@ const Root = (props) => {
         imageVisible={state.imageVisible}
         imageOpacity={state.imageOpacity}
       />
+      {/* debug outputs */}
+      <details>
+        <summary>Debug outputs</summary>
+        mouseI: {state.mouseI}, mouseJ: {state.mouseJ}, colorKey:{" "}
+        {state.colorKey}
+      </details>
     </div>
   );
 };

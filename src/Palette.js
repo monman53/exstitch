@@ -1,6 +1,7 @@
 export const Palette = (props) => {
   return (
     <div>
+      <hr />
       <label onClick={props.drawingModeHandlerCreator("brush")}>
         <input type="radio" readOnly checked={props.drawingMode === "brush"} />
         Brush
