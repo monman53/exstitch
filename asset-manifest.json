@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/static/js/main.fa86845d.js",
-    "index.html": "/index.html",
-    "main.fa86845d.js.map": "/static/js/main.fa86845d.js.map"
+    "main.js": "/exstitch/static/js/main.9eb382a8.js",
+    "index.html": "/exstitch/index.html",
+    "main.9eb382a8.js.map": "/exstitch/static/js/main.9eb382a8.js.map"
   },
   "entrypoints": [
-    "static/js/main.fa86845d.js"
+    "static/js/main.9eb382a8.js"
   ]
 }
