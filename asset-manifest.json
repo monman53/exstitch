@@ -1,17 +1,10 @@
 {
   "files": {
-    "main.css": "/exstitch/static/css/main.5477c8bb.css",
-    "main.js": "/exstitch/static/js/main.6e42b47d.js",
-    "static/js/787.9ba648a3.chunk.js": "/exstitch/static/js/787.9ba648a3.chunk.js",
-    "static/media/bootstrap-icons.woff?": "/exstitch/static/media/bootstrap-icons.c1d7432ee75fa194e499.woff",
-    "static/media/bootstrap-icons.woff2?": "/exstitch/static/media/bootstrap-icons.a13b815539b49de48d23.woff2",
-    "index.html": "/exstitch/index.html",
-    "main.5477c8bb.css.map": "/exstitch/static/css/main.5477c8bb.css.map",
-    "main.6e42b47d.js.map": "/exstitch/static/js/main.6e42b47d.js.map",
-    "787.9ba648a3.chunk.js.map": "/exstitch/static/js/787.9ba648a3.chunk.js.map"
+    "main.js": "/static/js/main.fa86845d.js",
+    "index.html": "/index.html",
+    "main.fa86845d.js.map": "/static/js/main.fa86845d.js.map"
   },
   "entrypoints": [
-    "static/css/main.5477c8bb.css",
-    "static/js/main.6e42b47d.js"
+    "static/js/main.fa86845d.js"
   ]
 }
