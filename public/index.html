@@ -4,6 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>exstitch</title>
+
+    <!-- Google Analytics (production host only — no counting during development) -->
+    <script>
+      if (location.hostname === 'monman53.github.io') {
+        var gaScript = document.createElement('script');
+        gaScript.async = true;
+        gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-E9ZG1KHTVT';
+        document.head.appendChild(gaScript);
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-E9ZG1KHTVT');
+      }
+    </script>
   </head>
 
   <body>
